@@ -43,20 +43,21 @@ class Alaska(Dataset):
         datapoint (tuple) : (image (tensor), label (int))
     """
     def __getitem__(self, idx): 
+        ind = idx % NUM_IM_PER_FILE
         if (idx <= NUM_IM_PER_FILE):
-            image = imageio.imread(self.path + "/Cover/" + str(idx).rjust(5, '0') + ".jpg")
+            image = imageio.imread(self.path + "/Cover/" + str(ind).rjust(5, '0') + ".jpg")
             label = 0
         elif (idx <= 2*NUM_IM_PER_FILE):
-            image = imageio.imread(self.path + "/JMiPOD/" + str(idx).rjust(5, '0') + ".jpg")
+            image = imageio.imread(self.path + "/JMiPOD/" + str(ind).rjust(5, '0') + ".jpg")
             label = 1
         elif (idx <= 3*NUM_IM_PER_FILE): 
-            image = imageio.imread(self.path + "/JUNIWARD/" + str(idx).rjust(5, '0') + ".jpg")
+            image = imageio.imread(self.path + "/JUNIWARD/" + str(ind).rjust(5, '0') + ".jpg")
             label = 2
         elif (idx <= 4*NUM_IM_PER_FILE)
-            image = imageio.imread(self.path + "/UERD/" + str(idx).rjust(5, '0') + ".jpg") 
+            image = imageio.imread(self.path + "/UERD/" + str(ind).rjust(5, '0') + ".jpg") 
             label = 4
         else: 
-            raise ValueError("Index out of range!")
+            raise IndexError("Index out of range!")
         return (torch.tensor(image), label)
 
 
