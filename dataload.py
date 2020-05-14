@@ -9,10 +9,11 @@ from torch.utils.data import Dataset, DataLoader
 import imageio
 
 NUM_IM_PER_FILE = 8005 #Number of images per file
+NUM_TEST_IM = 5000 #Number of test images
 
 class Alaska(Dataset): 
     """
-    Alaska dataset loader.
+    Description: Alaska dataset loader.
     More information can be found at:
     https://www.kaggle.com/c/alaska2-image-steganalysis/data?select=Cover
 
@@ -61,3 +62,31 @@ class Alaska(Dataset):
         return (torch.tensor(image), label)
 
 
+class AlaskaTest(Dataset): 
+    """
+    Description: Alaska dataset test loader
+    Args: 
+        dirpath (str) : Path to directory containing dataset.   
+        Example: Lucas's path is C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data
+    """
+
+    def __init__(self, dirpath):
+        self.path = dirpath
+
+    """ 
+    Description: returns size of dataset
+    """
+    def __len__(self) : 
+        return NUM_TEST_IM
+
+    """ 
+    Description : Pulls image from dataset
+    Usage: dataloader[idx] 
+    Args: 
+        idx: index of test image (1 to 5000)
+    Returns: 
+        datapoint: image
+    """
+    def __getitem__(self, idx): 
+        return imageio.imread(self.path + "/Test/" + str(idx).rjust(4, '0') + ".jpg")
+        raise IndexError("Index out of range!")
