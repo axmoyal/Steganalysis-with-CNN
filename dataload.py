@@ -102,7 +102,7 @@ class AlaskaTest(Dataset):
         datapoint: image
     """
     def __getitem__(self, idx): 
-        return imageio.imread(self.path + "/Test/" + str(idx).rjust(4, '0') + ".jpg")
+        return imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg")
 
 
 ################################# HELPER FUNCTIONS ###################################
