@@ -1,7 +1,6 @@
 import os 
 os.chdir('data')
-L_dir=os.listdir()
-for directory in L_dir:
+for directory in ['Cover','JMiPOD','JUNIWARD','UERD','Test']:
     os.chdir(directory)
     L_image=os.listdir()
     i=0
