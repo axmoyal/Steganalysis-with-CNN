@@ -9,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 import imageio
 import numpy as np
 
-NUM_IM_PER_FILE = 80005 #Number of images per file
+NUM_IM_PER_FILE = 75000 #Number of images per file
 NUM_TEST_IM = 5000 #Number of test images
 NUM_FILES = 4 #Number of files
 
@@ -102,7 +102,7 @@ class AlaskaTest(Dataset):
         datapoint: image
     """
     def __getitem__(self, idx): 
-        return imageio.imread(self.path + "/Test/" + str(idx + 1).rjust(4, '0') + ".jpg")
+        return imageio.imread(self.path + "/Test/" + str(idx).rjust(4, '0') + ".jpg")
 
 
 ################################# HELPER FUNCTIONS ###################################
@@ -121,10 +121,10 @@ def single(idx, scale, path, isbinary) :
     ind[0] += 1
     label = 1 if isbinary else ind[1] 
     if (ind[1] == 0):
-        image = imageio.imread(path + "/Cover/" + str(ind[0] + 1).rjust(5, '0') + ".jpg")
+        image = imageio.imread(path + "/Cover/" + str(ind[0] ).rjust(5, '0') + ".jpg")
         label = 0
     elif (ind[1] == 1):
-        image = imageio.imread(path + "/JMiPOD/" + str(ind[0] + 1).rjust(5, '0') + ".jpg")
+        image = imageio.imread(path + "/JMiPOD/" + str(ind[0] ).rjust(5, '0') + ".jpg")
     elif (ind[1] == 2): 
         image = imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg")
     elif (ind[1] == 3):
@@ -144,7 +144,6 @@ Returns:
 """
 def pairs(idx, scale, path, isbinary):
     ind = list(np.unravel_index(idx, (NUM_IM_PER_FILE, NUM_FILES - 1, scale)))
-    ind[0] += 1
     label = 1 if isbinary else ind[1] + 1 
     og = imageio.imread(path + "/Cover/" + str(ind[0]).rjust(5, '0') + ".jpg")
     if (ind[1] == 0):
@@ -168,7 +167,6 @@ Returns:
 def quads(idx, scale, path, isbinary):
     ind = list(np.unravel_index(idx, (NUM_IM_PER_FILE, scale)))
     labels = [1, 1, 1] if isbinary else [1 , 2, 3]
-    ind[0] += 1
     og = transform(imageio.imread(path + "/Cover/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im1 = transform(imageio.imread(path + "/JMiPOD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im2 = transform(imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
