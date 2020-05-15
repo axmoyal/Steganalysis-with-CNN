@@ -77,7 +77,8 @@ def test(test_loader,Model,path):
 	print('Test Loss : '+str(loss))
 	print('Test Accuract : '+str(accuracy))
 
-AlaskaDataset=Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data","single",1, "multi")
-Model=SRNET()
-train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
-train(train_loader,dev_loader,Model)
+if __name__ == '__main__':
+    AlaskaDataset=Alaska("./data","single",1, "multi")
+    Model=SRNET()  
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
+    train(train_loader,dev_loader,Model)
