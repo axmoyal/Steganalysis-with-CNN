@@ -48,7 +48,7 @@ def prepbatch(X, y) :
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
 def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_epoch=10):
 	#tb_writer = SummaryWriter()
-    opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
+    opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
             X, y_label = prepbatch(X, y_label)
@@ -58,8 +58,8 @@ def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_e
             print(X.type())
             y_pred=model(X)
            
-           # print(y_pred)
-            
+            print(y_pred.shape)
+            print(y_label.shape)
             loss=F.cross_entropy(y_pred,y_label)           
             #loss_value=loss.item()
             print(loss)
@@ -78,12 +78,12 @@ def eval_model(model,loader):
     LOSS=0
     accuracy=0
     for batch_index,(X,y_label) in enumerate(loader):
-
         y_pred=model(X)
         loss=F.cross_entropy(y_pred,y_label)
         LOSS+=loss.item()
         #accuracy+=(y_label.eq(y_pred.long()).sum()
-        accuracy+=y_label.eq(y_pred.long()).sum()
+        _, pred_classes = y_pred.max(axis = 1)
+        accuracy+=y_label.eq(pred_classes.long()).sum()
     #accuracy=accuracy/len(loader.dataset)
     #LOSS=LOSS/len(loader.dataset)
     return LOSS,accuracy
@@ -97,7 +97,7 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
-    AlaskaDataset=Alaska("./data","quads",1, "multi")
-    Model=SRNET()  
-    train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
-    train(train_loader,dev_loader,Model)
+    AlaskaDataset=Alaska("./data","single",1, "multi")
+    model=SRNET()  
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
+    train(train_loader,dev_loader,model)

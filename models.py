@@ -37,6 +37,6 @@ class SRNET(nn.Module):
     def forward(self,x):
         for layer in self.layers:
             x = layer(x)
-            print( x.shape )
+            # print( x.shape )
         return x 
 

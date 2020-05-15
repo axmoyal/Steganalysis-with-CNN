@@ -102,7 +102,7 @@ class AlaskaTest(Dataset):
         datapoint: image
     """
     def __getitem__(self, idx): 
-        return torch.tensor(imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg"), dtype= torch.double).permute(2,0,1)
+        return torch.tensor(imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg"), dtype= torch.float).permute(2,0,1)
 
 
 ################################# HELPER FUNCTIONS ###################################
@@ -181,7 +181,7 @@ Args:
     transformation: number between 1 and 8 to decide transformation
 """
 def transform(image, transformation): 
-    image = torch.tensor(image, dtype= torch.double).permute(2,0,1)
+    image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
     if transformation == 0: return image
     if transformation == 1: return image.rot90(1, [1, 2])
     if transformation == 2: return image.rot90(2, [1, 2])
