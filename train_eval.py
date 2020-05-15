@@ -30,19 +30,10 @@ def get_dataloaders(alaska_dataset,b_size,frac_test=0.25):
 	return train_loader,dev_loader
 
 def prepbatch(X, y) : 
-    num = X.shape[1]
+    if len(X.shape) > 4 : return X, y
     X = X.view(-1, 3, 512, 512)
-    if num == 1 :
-        return X, y
-    elif num == 2 :
-        ylabel = torch.zeros(X.shape[0])
-        ylabel[1::2] = y[1]
-    elif num == 4 : 
-        ylabel = torch.zeros(X.shape[0])
-        ylabel[1::4] = y[1]
-        ylabel[2::4] = y[2]
-        ylabel[3::4] = y[3]
-    return X, ylabel
+    y = y.view(-1)
+    return X, y
 
         
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader

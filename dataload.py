@@ -152,7 +152,7 @@ def pairs(idx, scale, path, isbinary):
         image = imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg")
     elif (ind[1] == 2):
         image = imageio.imread(path + "/UERD/" + str(ind[0]).rjust(5, '0') + ".jpg") 
-    return(torch.stack((transform(og, ind[2]), transform(image, ind[2])), dim = 0), (0, label))
+    return(torch.stack((transform(og, ind[2]), transform(image, ind[2])), dim = 0), torch.tensor((0, label)))
 
 """ 
 Description : Pulls image from dataset in quads mode
@@ -171,7 +171,7 @@ def quads(idx, scale, path, isbinary):
     im1 = transform(imageio.imread(path + "/JMiPOD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im2 = transform(imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im3 = transform(imageio.imread(path + "/UERD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
-    return (torch.stack((og, im1, im2, im3), dim = 0), (0, labels[0], labels[1], labels[2]))
+    return (torch.stack((og, im1, im2, im3), dim = 0), torch.tensor((0, labels[0], labels[1], labels[2])))
 
 
 """
