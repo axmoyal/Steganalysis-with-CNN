@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
-#from torch.utils.tensorboard import SummaryWriter
 from dataload import Alaska
 
 
@@ -74,7 +73,9 @@ def test(test_loader,Model,path):
 	print('Test Loss : '+str(loss))
 	print('Test Accuract : '+str(accuracy))
 
-AlaskaDataset=Alaska("C:/Users/axmoyal/Desktop/DNN_Steganalysis/data","single",1, "binary")
-Model=TwoLayerNet(512*512*3,512,1)
-train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
-train(train_loader,dev_loader,Model)
+
+if __name__ == '__main__':
+    AlaskaDataset=Alaska("C:/Users/axmoyal/Desktop/DNN_Steganalysis/data","single",1, "binary")
+    Model=TwoLayerNet(512*512*3,512,1)
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
+    train(train_loader,dev_loader,Model)
