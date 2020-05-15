@@ -140,7 +140,7 @@ Args:
     path: Path to dataset
     isbinary: bool indicating if it is a binary classification 
 Returns: 
-    datapoint (tuple) : (original, class, corrupted, class)
+    datapoint (tuple) : (tuple (original, corrupted), label(og label, corrupted label))
 """
 def pairs(idx, scale, path, isbinary):
     ind = list(np.unravel_index(idx, (NUM_IM_PER_FILE, NUM_FILES - 1, scale)))
@@ -153,7 +153,7 @@ def pairs(idx, scale, path, isbinary):
         image = imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg")
     elif (ind[1] == 2):
         image = imageio.imread(path + "/UERD/" + str(ind[0]).rjust(5, '0') + ".jpg") 
-    return(transform(og, ind[2]), 0, transform(image, ind[2]), label)
+    return((transform(og, ind[2]), transform(image, ind[2])), (0, label))
 
 """ 
 Description : Pulls image from dataset in quads mode
@@ -163,7 +163,7 @@ Args:
     path: Path to dataset
     isbinary: bool indicating if it is a binary classification 
 Returns: 
-    datapoint (tuple) : (original, class, JMiPOD, class, JUNIWARD, class, UERD, class)
+    datapoint (tuple) : (tuple(original, JMiPOD, JUNIWARD, UERD) ,tuple(0, c1, c2 ,c3))
 """
 def quads(idx, scale, path, isbinary):
     ind = list(np.unravel_index(idx, (NUM_IM_PER_FILE, scale)))
@@ -173,7 +173,7 @@ def quads(idx, scale, path, isbinary):
     im1 = transform(imageio.imread(path + "/JMiPOD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im2 = transform(imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im3 = transform(imageio.imread(path + "/UERD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
-    return (og, 0, im1, labels[0], im2, labels[1], im3, labels[2])
+    return ((og, im1, im2, im3), (0, labels[0], labels[1], labels[2]))
 
 
 """
