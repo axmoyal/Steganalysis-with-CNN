@@ -31,7 +31,6 @@ def get_dataloaders(alaska_dataset,b_size,frac_test=0.25):
 	return train_loader,dev_loader
 
 def prepbatch(X, y) : 
-    if len(X.shape) > 4 : return X, y
     X = X.view(-1, 3, 512, 512)
     y = y.view(-1)
     return X, y
@@ -43,10 +42,14 @@ def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate
     opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
-            X, y_label = prepbatch(X, y_label)
+
 
             X = X.to(device)
             y_label = y_label.to(device)
+
+            X, y_label = prepbatch(X, y_label)
+
+
 
             opti.zero_grad()
             print(y_label)
@@ -58,7 +61,7 @@ def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate
             print(y_label.shape)
             loss=F.cross_entropy(y_pred,y_label)           
             #loss_value=loss.item()
-            print('Batch loss'.format(loss))
+            print('Batch loss: {}'.format(loss))
             loss.backward()
             opti.step()  
             #tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
@@ -80,12 +83,15 @@ def eval_model(model,loader, device):
         X = X.to(device)
         y_label = y_label.to(device)
 
+        X, y_label = prepbatch(X, y_label)
+
         y_pred=model(X)
         loss=F.cross_entropy(y_pred,y_label)
         LOSS+=loss.item()
         #accuracy+=(y_label.eq(y_pred.long()).sum()
         _, pred_classes = y_pred.max(axis = 1)
         accuracy+=y_label.eq(pred_classes.long()).sum()
+        # print("Eval successful")
     accuracy=accuracy/len(loader.dataset)
     LOSS=LOSS/len(loader.dataset)
     return LOSS,accuracy
@@ -100,8 +106,8 @@ def test(test_loader,Model,path):
 
 if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
-    AlaskaDataset=Alaska("./data","single",1, "multi")
+    AlaskaDataset=Alaska("./data","pairs",1, "multi")
     model = SRNET()  
     model = model.to(device)
-    train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,1)
     train(train_loader,dev_loader,model, device)
