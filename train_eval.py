@@ -29,14 +29,31 @@ def get_dataloaders(alaska_dataset,b_size,frac_test=0.25):
 	dev_loader=td.DataLoader(dev_set, batch_size=b_size)
 	return train_loader,dev_loader
 
+def prepbatch(X, y) : 
+    num = X.shape[1]
+    X = X.view(-1, 3, 512, 512)
+    if num == 1 :
+        return X, y
+    elif num == 2 :
+        ylabel = torch.zeros(X.shape[0])
+        ylabel[1::2] = y[1]
+    elif num == 4 : 
+        ylabel = torch.zeros(X.shape[0])
+        ylabel[1::4] = y[1]
+        ylabel[2::4] = y[2]
+        ylabel[3::4] = y[3]
+    return X, ylabel
+
+        
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
 def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_epoch=10):
 	#tb_writer = SummaryWriter()
     opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
+            X, y_label = prepbatch(X, y_label)
             opti.zero_grad()
-            print(y_label.shape)
+            print(y_label)
             print(X.shape)	
             print(X.type())
             y_pred=model(X)
@@ -80,12 +97,7 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    AlaskaDataset=Alaska("./data","pairs",1, "multi")
+    AlaskaDataset=Alaska("./data","quads",1, "multi")
     Model=SRNET()  
-=======
-    AlaskaDataset=Alaska("./data","single",1, "multi")
-    model=SRNET()  
->>>>>>> 51b3c50edd966d06d8023f01334076f03ce24ad4
-    train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
-    train(train_loader,dev_loader,model)
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
+    train(train_loader,dev_loader,Model)
