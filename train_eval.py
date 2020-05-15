@@ -32,13 +32,11 @@ def get_dataloaders(alaska_dataset,b_size,frac_test=0.25):
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
 def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_epoch=10):
 	#tb_writer = SummaryWriter()
-    opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
+    opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
+
             opti.zero_grad()
-            print(y_label.shape)
-            print(X.shape)	
-            print(X.type())
             y_pred=model(X)
            
            # print(y_pred)
