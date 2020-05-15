@@ -36,7 +36,7 @@ def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_e
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
             opti.zero_grad()
-            print(y_label)
+            print(y_label.shape)
             print(X.shape)	
             y_pred=model(X)
            
@@ -78,7 +78,12 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     AlaskaDataset=Alaska("./data","pairs",1, "multi")
     Model=SRNET()  
+=======
+    AlaskaDataset=Alaska("./data","single",1, "multi")
+    model=SRNET()  
+>>>>>>> 51b3c50edd966d06d8023f01334076f03ce24ad4
     train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
-    train(train_loader,dev_loader,Model)
+    train(train_loader,dev_loader,model)

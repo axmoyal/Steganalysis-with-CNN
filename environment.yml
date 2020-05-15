@@ -16,3 +16,4 @@ dependencies:
   - tqdm
   - urllib3
   - pytorch
+  - imageio
