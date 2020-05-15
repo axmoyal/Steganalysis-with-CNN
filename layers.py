@@ -10,7 +10,7 @@ class Layer1(nn.Module):
         kernel_size (int) : size of kernel
     """
     def __init__(self, in_channels, out_channels, kernel_size = 3):
-        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size)
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, padding = 1)
         self.batch_norm = torch.nn.BatchNorm2d(out_channels)
         
     def forward(self, x):
@@ -26,7 +26,7 @@ class Layer2(nn.Module):
     """
     def __init__(self, in_channels, out_channels, kernel_size = 3):
         self.l1 = Layer1(in_channels, out_channels, kernel_size)
-        self.conv = nn.Conv2d(out_channels, out_channels, kernel_size)
+        self.conv = nn.Conv2d(out_channels, out_channels, kernel_size, padding = 1)
         self.batch_norm = torch.nn.BatchNorm2d(out_channels)
 
         
@@ -47,7 +47,7 @@ class Layer3(nn.Module):
         self.batch_norm_hwy =  torch.nn.BatchNorm2d(out_channels)
 
         self.l1 = Layer1(in_channels, out_channels, kernel_size)
-        self.conv = nn.Conv2d(out_channels, out_channels, kernel_size)
+        self.conv = nn.Conv2d(out_channels, out_channels, kernel_size, padding = 1)
         self.batch_norm = torch.nn.BatchNorm2d(out_channels)
         self.av_pool = nn.AvgPool2d(3, stride = 2)
 
@@ -66,7 +66,7 @@ class Layer4(nn.Module):
 
     def __init__(self, in_channels, out_channels, kernel_size = 3):
         self.l1 = Layer1(in_channels, out_channels, kernel_size)
-        self.conv = nn.Conv2d(out_channels, out_channels, kernel_size)
+        self.conv = nn.Conv2d(out_channels, out_channels, kernel_size, padding = 1)
         self.batch_norm = torch.nn.BatchNorm2d(out_channels)
         self.glob_pool = nn.AvgPool2d(16)
 
