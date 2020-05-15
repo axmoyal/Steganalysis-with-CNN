@@ -102,7 +102,7 @@ class AlaskaTest(Dataset):
         datapoint: image
     """
     def __getitem__(self, idx): 
-        return torch.tensor(imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg")).permute(2,0,1)
+        return torch.tensor(imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg"), dtype= torch.double).permute(2,0,1)
 
 
 ################################# HELPER FUNCTIONS ###################################
