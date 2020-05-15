@@ -80,12 +80,7 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    AlaskaDataset=Alaska("./data","pairs",1, "multi")
-    Model=SRNET()  
-=======
     AlaskaDataset=Alaska("./data","single",1, "multi")
     model=SRNET()  
->>>>>>> 51b3c50edd966d06d8023f01334076f03ce24ad4
     train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
     train(train_loader,dev_loader,model)
