@@ -152,7 +152,7 @@ def pairs(idx, scale, path, isbinary):
         image = imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg")
     elif (ind[1] == 2):
         image = imageio.imread(path + "/UERD/" + str(ind[0]).rjust(5, '0') + ".jpg") 
-    return((transform(og, ind[2]), transform(image, ind[2])), (0, label))
+    return(torch.stack((transform(og, ind[2]), transform(image, ind[2])), dim = 0), (0, label))
 
 """ 
 Description : Pulls image from dataset in quads mode
@@ -171,7 +171,7 @@ def quads(idx, scale, path, isbinary):
     im1 = transform(imageio.imread(path + "/JMiPOD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im2 = transform(imageio.imread(path + "/JUNIWARD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
     im3 = transform(imageio.imread(path + "/UERD/" + str(ind[0]).rjust(5, '0') + ".jpg"), ind[1])
-    return ((og, im1, im2, im3), (0, labels[0], labels[1], labels[2]))
+    return (torch.stack((og, im1, im2, im3), dim = 0), (0, labels[0], labels[1], labels[2]))
 
 
 """
@@ -181,7 +181,7 @@ Args:
     transformation: number between 1 and 8 to decide transformation
 """
 def transform(image, transformation): 
-    image = torch.tensor(image).permute(2,0,1)
+    image = torch.tensor(image, dtype= torch.double).permute(2,0,1)
     if transformation == 0: return image
     if transformation == 1: return image.rot90(1, [1, 2])
     if transformation == 2: return image.rot90(2, [1, 2])
