@@ -102,7 +102,7 @@ class AlaskaTest(Dataset):
         datapoint: image
     """
     def __getitem__(self, idx): 
-        return imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg")
+        return torch.tensor(imageio.imread(self.path + "/Test/" + str(idx).rjust(5, '0') + ".jpg")).permute(2,0,1)
 
 
 ################################# HELPER FUNCTIONS ###################################
@@ -196,27 +196,27 @@ def transform(image, transformation):
 
 ########################### TEST ################################
 
-# import matplotlib.pyplot as plt
-# d1 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "single", 1, "binary")
-# d2 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "pairs", 8, "binary")
-# d3 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "quads", 5, "multi")
-# t1 = AlaskaTest("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data")
-# while True: 
-#     ind1 = np.random.randint(0, len(d1))
-#     ind2 = np.random.randint(0, len(d2))
-#     ind3 = np.random.randint(0, len(d3))
-#     ind4 = np.random.randint(0, len(t1))
-#     plt.imshow(d1[ind1][0].permute(1,2,0))
-#     plt.title("Label d1 " + str(d1[ind1][1]))
-#     plt.show()
-#     for i in [0,2]: 
-#         plt.imshow(d2[ind2][i].permute(1,2,0))
-#         plt.title("Label d2 " + str(d2[ind2][i+1]))
-#         plt.show()
-#     for i in [0,2,4,6]: 
-#         plt.imshow(d3[ind3][i].permute(1,2,0))
-#         plt.title("Label d3 " + str(d3[ind3][i + 1]))
-#         plt.show()
-#     plt.imshow(t1[ind4].permute(1,2,0))
-#     plt.title("Label t1" + str(t1[ind4][1]))
-#     plt.show()
+import matplotlib.pyplot as plt
+d1 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "single", 1, "binary")
+d2 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "pairs", 8, "binary")
+d3 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "quads", 5, "multi")
+t1 = AlaskaTest("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data")
+while True: 
+    ind1 = np.random.randint(0, len(d1))
+    ind2 = np.random.randint(0, len(d2))
+    ind3 = np.random.randint(0, len(d3))
+    ind4 = np.random.randint(0, len(t1))
+    plt.imshow(d1[ind1][0].permute(1,2,0))
+    plt.title("Label d1 " + str(d1[ind1][1]))
+    plt.show()
+    for i in [0,1]: 
+        plt.imshow(d2[ind2][0][i].permute(1,2,0))
+        plt.title("Label d2 " + str(d2[ind2][1][i]))
+        plt.show()
+    for i in [0,1,2,3]: 
+        plt.imshow(d3[ind3][0][i].permute(1,2,0))
+        plt.title("Label d3 " + str(d3[ind3][1][i]))
+        plt.show()
+    plt.imshow(t1[ind4].permute(1,2,0))
+    plt.title("Label t1" )
+    plt.show()
