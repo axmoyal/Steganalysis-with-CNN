@@ -3,7 +3,18 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.utils.data as td
 from torch.utils.tensorboard import SummaryWriter
+from dataload import Alaska
+
+def get_dataloaders(dataset_path,b_size,frac_test=0.25):
+	alaska_dataset=Alaska(dataset_path)
+	N=len(alaska_dataset)
+	lengths = [int(N*(1-frac_test)), int(N*frac_test)]
+	train_set, dev_set = td.random_split(alaska_dataset, lengths)
+	train_loader=td.DataLoader(train_set, batch_size=b_size)
+	dev_loader=td.DataLoader(dev_set, batch_size=b_size)
+	return train_loader,dev_loader
 
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
 def train(train_loader,dev_loader,model,num_batch,path,lear_rate=1e-4,N_epoch=10):
