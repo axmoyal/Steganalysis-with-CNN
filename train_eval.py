@@ -38,6 +38,7 @@ def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_e
             opti.zero_grad()
             print(y_label.shape)
             print(X.shape)	
+            print(X.type())
             y_pred=model(X)
            
            # print(y_pred)
@@ -60,6 +61,7 @@ def eval_model(model,loader):
     LOSS=0
     accuracy=0
     for batch_index,(X,y_label) in enumerate(loader):
+
         y_pred=model(X)
         loss=F.cross_entropy(y_pred,y_label)
         LOSS+=loss.item()
