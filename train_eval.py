@@ -22,7 +22,7 @@ from utils import get_available_devices
 #         y_pred = self.linear2(h_relu)
 #         return y_pred
 
-def get_dataloaders(alaska_dataset,b_size,frac_test=0.25):
+def get_dataloaders(alaska_dataset,b_size,frac_test=0.005):
 	N=len(alaska_dataset)
 	lengths = [int(N*(1-frac_test)), int(N*frac_test)]
 	train_set, dev_set = td.random_split(alaska_dataset, lengths)
@@ -92,7 +92,8 @@ def eval_model(model,loader, device):
         _, pred_classes = y_pred.max(axis = 1)
         accuracy+=y_label.eq(pred_classes.long()).sum()
         # print("Eval successful")
-    accuracy=accuracy/len(loader.dataset)
+    print(accuracy)
+    accuracy=accuracy.item()/len(loader.dataset)
     LOSS=LOSS/len(loader.dataset)
     return LOSS,accuracy
     
@@ -110,5 +111,5 @@ if __name__ == '__main__':
     AlaskaDataset=Alaska("./data","pairs",1, "multi")
     model = SRNET()  
     model = model.to(device)
-    train_loader,dev_loader=get_dataloaders(AlaskaDataset,16)
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
     train(train_loader,dev_loader,model, device)
