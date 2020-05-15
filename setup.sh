@@ -9,3 +9,4 @@ mv alaska2-image-steganalysis.zip ./data
 cd data
 unzip alaska2-image-steganalysis.zip
 rm alaska2-image-steganalysis.zip 
+python rename.py

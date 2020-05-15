@@ -109,5 +109,5 @@ if __name__ == '__main__':
     AlaskaDataset=Alaska("./data","pairs",1, "multi")
     model = SRNET()  
     model = model.to(device)
-    train_loader,dev_loader=get_dataloaders(AlaskaDataset,1)
+    train_loader,dev_loader=get_dataloaders(AlaskaDataset,16)
     train(train_loader,dev_loader,model, device)
