@@ -4,20 +4,22 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
+#from torch.utils.tensorboard import SummaryWriter
 from dataload import Alaska
+from models import SRNET
 
 
-class TwoLayerNet(torch.nn.Module):
-    def __init__(self, D_in, H, D_out):
-        super(TwoLayerNet, self).__init__()
-        self.linear1 = torch.nn.Linear(D_in, H)
-        self.linear2 = torch.nn.Linear(H, D_out)
+# class TwoLayerNet(torch.nn.Module):
+#     def __init__(self, D_in, H, D_out):
+#         super(TwoLayerNet, self).__init__()
+#         self.linear1 = torch.nn.Linear(D_in, H)
+#         self.linear2 = torch.nn.Linear(H, D_out)
 
-    def forward(self, x):
-        x=torch.flatten(x)
-        h_relu = self.linear1(x).clamp(min=0)
-        y_pred = self.linear2(h_relu)
-        return y_pred
+#     def forward(self, x):
+#         x = x.reshape(N,)
+#         h_relu = self.linear1(x).clamp(min=0)
+#         y_pred = self.linear2(h_relu)
+#         return y_pred
 
 def get_dataloaders(alaska_dataset,b_size,frac_test=0.25):
 	N=len(alaska_dataset)
@@ -33,11 +35,13 @@ def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_e
     opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
-            opti.zero_grad()	
-            y_pred=model(X)
-            print(X)
-            print(y_pred)
+            opti.zero_grad()
             print(y_label)
+            print(X.shape)	
+            y_pred=model(X)
+           
+           # print(y_pred)
+            
             loss=F.cross_entropy(y_pred,y_label)           
             #loss_value=loss.item()
             print(loss)
@@ -73,9 +77,7 @@ def test(test_loader,Model,path):
 	print('Test Loss : '+str(loss))
 	print('Test Accuract : '+str(accuracy))
 
-
-if __name__ == '__main__':
-    AlaskaDataset=Alaska("C:/Users/axmoyal/Desktop/DNN_Steganalysis/data","single",1, "binary")
-    Model=TwoLayerNet(512*512*3,512,1)
-    train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
-    train(train_loader,dev_loader,Model)
+AlaskaDataset=Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data","single",1, "multi")
+Model=SRNET()
+train_loader,dev_loader=get_dataloaders(AlaskaDataset,32)
+train(train_loader,dev_loader,Model)
