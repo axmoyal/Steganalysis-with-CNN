@@ -9,11 +9,10 @@ dependencies:
   - numpy
   - pip
   - imageio
-  - spacy=2.0.16
   - tensorboard
   - tensorflow
   - tensorboardX
   - tqdm
   - urllib3
-  - pytorch
+  - pytorch = 1.0.0
   - imageio
