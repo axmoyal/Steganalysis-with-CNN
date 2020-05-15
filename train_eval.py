@@ -52,9 +52,9 @@ def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate
 
 
             opti.zero_grad()
-            print(y_label)
-            print(X.shape)	
-            print(X.type())
+            # print(y_label)
+            # print(X.shape)	
+            # print(X.type())
             y_pred=model(X)
            
             print(y_pred.shape)
@@ -106,6 +106,7 @@ def test(test_loader,Model,path):
 
 if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
+    print(device)
     AlaskaDataset=Alaska("./data","pairs",1, "multi")
     model = SRNET()  
     model = model.to(device)
