@@ -67,12 +67,14 @@ def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate
             print(y_label.shape)
             loss=F.cross_entropy(y_pred,y_label)           
             #loss_value=loss.item()
-            print(loss)
+            print('Batch loss'.format(loss))
             loss.backward()
             opti.step()  
             #tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
             if batch_index%5==0:
                 loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
+                print('Dev Loss: {}'.format(loss_dev))
+                print('Accuracy: {}'.format(accuracy_dev))
                 #tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
                 #tb_writer.add_scalar('dev accuracy', loss_dev, epoch*num_batch+batch_index)
             #torch.save(model.state_dict(), path)
@@ -93,8 +95,8 @@ def eval_model(model,loader, device):
         #accuracy+=(y_label.eq(y_pred.long()).sum()
         _, pred_classes = y_pred.max(axis = 1)
         accuracy+=y_label.eq(pred_classes.long()).sum()
-    #accuracy=accuracy/len(loader.dataset)
-    #LOSS=LOSS/len(loader.dataset)
+    accuracy=accuracy/len(loader.dataset)
+    LOSS=LOSS/len(loader.dataset)
     return LOSS,accuracy
     
 
