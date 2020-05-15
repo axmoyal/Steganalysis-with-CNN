@@ -7,6 +7,7 @@ import torch.utils.data as td
 #from torch.utils.tensorboard import SummaryWriter
 from dataload import Alaska
 from models import SRNET
+from utils import get_available_devices
 
 
 # class TwoLayerNet(torch.nn.Module):
@@ -46,12 +47,16 @@ def prepbatch(X, y) :
 
         
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
-def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_epoch=10):
+def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate=1e-4,N_epoch=10):
 	#tb_writer = SummaryWriter()
     opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
             X, y_label = prepbatch(X, y_label)
+
+            X = X.to(device)
+            y_label = y_label.to(device)
+
             opti.zero_grad()
             print(y_label)
             print(X.shape)	
@@ -67,17 +72,21 @@ def train(train_loader,dev_loader,model,num_batch=0,path=None,lear_rate=1e-4,N_e
             opti.step()  
             #tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
             if batch_index%5==0:
-                loss_dev,accuracy_dev=eval_model(model,dev_loader)
+                loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
                 #tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
                 #tb_writer.add_scalar('dev accuracy', loss_dev, epoch*num_batch+batch_index)
             #torch.save(model.state_dict(), path)
 
 # evaluate the model on a loader.
-def eval_model(model,loader):
+def eval_model(model,loader, device):
     model.eval()
     LOSS=0
     accuracy=0
     for batch_index,(X,y_label) in enumerate(loader):
+
+        X = X.to(device)
+        y_label = y_label.to(device)
+
         y_pred=model(X)
         loss=F.cross_entropy(y_pred,y_label)
         LOSS+=loss.item()
@@ -97,7 +106,9 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
+    device, gpu_ids = get_available_devices()
     AlaskaDataset=Alaska("./data","single",1, "multi")
-    model=SRNET()  
+    model = SRNET()  
+    model = model.to(device)
     train_loader,dev_loader=get_dataloaders(AlaskaDataset,2)
-    train(train_loader,dev_loader,model)
+    train(train_loader,dev_loader,model, device)
