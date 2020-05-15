@@ -8,6 +8,7 @@ dependencies:
   - ujson
   - numpy
   - pip
+  - imageio
   - spacy=2.0.16
   - tensorboard
   - tensorflow
