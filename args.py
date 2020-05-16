@@ -19,7 +19,8 @@ def save_params(params):
     if os.path.exists(("save/" + str(sys.argv[1]) + "/" + str(sys.argv[1]) + ".json")):
         answer = input(str(sys.argv[1]) + " already exists. Do you want to overwrite [y/n]: " )
     if answer != "y" and answer != None: 
-        sys.exit() 
-    os.makedirs("save/" + str(sys.argv[1]) + "/")
+        sys.exit()
+    if answer != "y":
+        os.mkdir("save/" + str(sys.argv[1]) + "/")
     with open(("save/" + str(sys.argv[1]) + "/" + str(sys.argv[1]) + ".json"), 'w') as fp:
         json.dump(params,sort_keys=True, indent=4,fp= fp)
