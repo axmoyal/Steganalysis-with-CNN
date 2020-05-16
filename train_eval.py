@@ -4,15 +4,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
-import sys
-import json
 
 #from torch.utils.tensorboard import SummaryWriter
 from tensorboardX import SummaryWriter
 from dataload import Alaska
 from models import *
 from utils import get_available_devices
-from args import load_params
+from args import *
 params = load_params()
 
 def get_dataloaders(alaska_dataset):
@@ -109,9 +107,7 @@ def test(test_loader,Model,path):
 
 if __name__ == '__main__':
     params = load_params()
-    assert len(sys.argv) > 1 , "Please provide a name to your model"
-    with open("save/" + str(sys.argv[1]) + ".json", 'w') as fp:
-        json.dump(params,sort_keys=True, indent=4,fp= fp)
+    save_params(params)
     device, gpu_ids = get_available_devices()
     print(device)
     AlaskaDataset= Alaska()
