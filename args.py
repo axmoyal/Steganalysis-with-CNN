@@ -1,6 +1,7 @@
 import json
 import os 
 import sys
+import shutil
 
 
 def load_params():
@@ -21,7 +22,7 @@ def save_params(params):
     if answer != "y" and answer != None: 
         sys.exit()
     if answer == "y":
-        os.rmdir("save/" + str(sys.argv[1]) + "/")
+        shutil.rmtree("save/" + str(sys.argv[1]) + "/")
     os.mkdir("save/" + str(sys.argv[1]) + "/")
     with open(("save/" + str(sys.argv[1]) + "/" + str(sys.argv[1]) + ".json"), 'w') as fp:
         json.dump(params,sort_keys=True, indent=4,fp= fp)
