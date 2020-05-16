@@ -78,13 +78,14 @@ def eval_model(model,loader, device):
     model.eval()
     LOSS=0
     accuracy=0
+    num = 0
     for batch_index,(X,y_label) in enumerate(loader):
 
         X = X.to(device)
         y_label = y_label.to(device)
 
         X, y_label = prepbatch(X, y_label)
-
+        num += X.shape[0]
         y_pred=model(X)
         loss=F.cross_entropy(y_pred,y_label)
         LOSS+=loss.item()
