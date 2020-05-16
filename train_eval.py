@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
 #from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
 from dataload import Alaska
 from models import SRNET
 from utils import get_available_devices
@@ -38,7 +39,7 @@ def prepbatch(X, y) :
         
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
 def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate=1e-4,N_epoch=10):
-	#tb_writer = SummaryWriter()
+    tb_writer = SummaryWriter()
     opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
@@ -52,25 +53,22 @@ def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate
 
 
             opti.zero_grad()
-            # print(y_label)
-            # print(X.shape)	
-            # print(X.type())
+
             y_pred=model(X)
            
-            print(y_pred.shape)
-            print(y_label.shape)
+
             loss=F.cross_entropy(y_pred,y_label)           
-            #loss_value=loss.item()
+            loss_value=loss.item()
             print('Batch loss: {}'.format(loss))
             loss.backward()
             opti.step()  
-            #tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
+            tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
             if batch_index%5==0:
                 loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
                 print('Dev Loss: {}'.format(loss_dev))
                 print('Accuracy: {}'.format(accuracy_dev))
-                #tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
-                #tb_writer.add_scalar('dev accuracy', loss_dev, epoch*num_batch+batch_index)
+                tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
+                tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
             #torch.save(model.state_dict(), path)
 
 # evaluate the model on a loader.
@@ -94,8 +92,8 @@ def eval_model(model,loader, device):
         accuracy+=y_label.eq(pred_classes.long()).sum()
         # print("Eval successful")
     print(accuracy)
-    accuracy=accuracy.item()/len(loader.dataset)
-    LOSS=LOSS/len(loader.dataset)
+    accuracy=accuracy.item()/num
+    LOSS=LOSS/num
     return LOSS,accuracy
     
 
