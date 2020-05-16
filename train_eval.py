@@ -115,7 +115,7 @@ if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
     print(device)
     AlaskaDataset= Alaska()
-    model = SRNET() 
+    model = Net(4) 
     model = model.to(device)
 
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)

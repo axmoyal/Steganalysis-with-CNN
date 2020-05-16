@@ -1,5 +1,5 @@
 {
-    "batch_size": 2,
+    "batch_size": 16,
     "classifier": "multi",
     "data_split_frac": 0.995,
     "hidden_dim": 16,
