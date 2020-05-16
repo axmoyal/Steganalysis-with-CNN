@@ -8,6 +8,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import imageio
 import numpy as np
+from args import load_params
 
 NUM_IM_PER_FILE = 75000 #Number of images per file
 NUM_TEST_IM = 5000 #Number of test images
@@ -24,7 +25,6 @@ class Alaska(Dataset):
 
     Args: 
         dirpath (str) : Path to directory containing dataset. 
-            Example: Lucas's path is C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data
         mode (str): Indicates the format return format for training:
             "single" : Single image
             "pairs" : Image pairs (corrupted, non-corrupted)
@@ -38,7 +38,15 @@ class Alaska(Dataset):
             "binary" : Binary class
     """
 
-    def __init__(self, dirpath, mode, scale, classifier):
+    def __init__(self):
+        ##################### GET PARAMS ######################
+        params = load_params()
+        mode = params["mode"]
+        scale = params["scale"]
+        classifier = params["classifier"]
+        dirpath = "./data"
+
+        ######################## INIT #########################
         self.path = dirpath
         self.scale = scale
         self.isbinary = True if classifier == "binary" else False
