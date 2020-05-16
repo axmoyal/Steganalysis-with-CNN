@@ -13,7 +13,6 @@ from dataload import Alaska
 from models import *
 from utils import get_available_devices
 from args import load_params
-
 params = load_params()
 
 def get_dataloaders(alaska_dataset):
