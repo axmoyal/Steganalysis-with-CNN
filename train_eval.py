@@ -63,7 +63,7 @@ def train(train_loader,dev_loader,model, device, num_batch=0,path=None,lear_rate
             loss.backward()
             opti.step()  
             tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
-            if batch_index%5==0:
+            if batch_index%1000==0:
                 loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
                 print('Dev Loss: {}'.format(loss_dev))
                 print('Accuracy: {}'.format(accuracy_dev))
@@ -91,7 +91,7 @@ def eval_model(model,loader, device):
         _, pred_classes = y_pred.max(axis = 1)
         accuracy+=y_label.eq(pred_classes.long()).sum()
         # print("Eval successful")
-    print(accuracy)
+    #print(accuracy)
     accuracy=accuracy.item()/num
     LOSS=LOSS/num
     return LOSS,accuracy
