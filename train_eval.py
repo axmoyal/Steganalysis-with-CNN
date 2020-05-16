@@ -18,6 +18,8 @@ def get_dataloaders(alaska_dataset):
     b_size = params["batch_size"]
     frac_test = params["data_split_frac"]
     N=len(alaska_dataset)
+    print("Training set :{}".format(int(N*(1-frac_test))))
+    print("Dev set:{}".format(int(N*frac_test)))
     lengths = [int(N*(1-frac_test)), int(N*frac_test)]
     train_set, dev_set = td.random_split(alaska_dataset, lengths)
     train_loader=td.DataLoader(train_set, batch_size=b_size)
@@ -43,6 +45,7 @@ def train(train_loader,dev_loader,model, device):
             X = X.to(device)
             y_label = y_label.to(device)
             X, y_label = prepbatch(X, y_label)
+            print(y_label)
             opti.zero_grad()
             y_pred=model(X)
            
@@ -113,12 +116,15 @@ if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
     print(device)
     AlaskaDataset= Alaska()
-    model = Net(4) 
+    #model = Net(4)
+    model = SRNET() 
     model = model.to(device)
 
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
 
     if params["overfitting"] =="True":
+        print("Overfitting mode")
         train(train_loader,train_loader,model,device)
     else:
+        print("Training mode")
         train(train_loader,dev_loader,model, device)
