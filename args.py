@@ -16,9 +16,9 @@ def load_params():
 def save_params(params): 
     assert len(sys.argv) > 1 , "Please provide a name to your model"
     answer = None
-    if path.exists(("save/" + str(sys.argv[1]) + ".json")):
+    if path.exists(("save/" + str(sys.argv[1]) + "/" + str(sys.argv[1]) + ".json")):
         answer = input(str(sys.argv[1]) + " already exists. Do you want to overwrite [y/n]: " )
     if answer != "y" and answer != None: 
         sys.exit() 
-    with open("save/" + str(sys.argv[1]) + ".json", 'w') as fp:
+    with open(("save/" + str(sys.argv[1]) + "/" + str(sys.argv[1]) + ".json"), 'w') as fp:
         json.dump(params,sort_keys=True, indent=4,fp= fp)
