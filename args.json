@@ -1,7 +1,7 @@
 {
     "batch_size": 2,
     "classifier": "multi",
-    "data_split_frac": 0.005,
+    "data_split_frac": 0.995,
     "hidden_dim": 16,
     "image_size": 512,
     "learning_rate": 0.001,

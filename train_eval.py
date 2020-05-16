@@ -37,7 +37,7 @@ def train(train_loader,dev_loader,model, device):
     N_epoch = params["num_epochs"]
     lear_rate = params["learning_rate"]
     num_batch = len(train_loader.dataset) / params["batch_size"]
-    tb_writer = SummaryWriter()
+    tb_writer = SummaryWriter(filename_suffix = sys.argv[1])
     opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
@@ -117,5 +117,10 @@ if __name__ == '__main__':
     AlaskaDataset= Alaska()
     model = SRNET() 
     model = model.to(device)
+
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
-    train(train_loader,dev_loader,model, device)
+
+    if params["overfitting"] =="True":
+        train(train_loader,train_loader,model,device)
+    else:
+        train(train_loader,dev_loader,model, device)
