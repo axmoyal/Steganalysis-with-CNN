@@ -34,7 +34,7 @@ def train(train_loader,dev_loader,model, device):
     N_epoch = params["num_epochs"]
     lear_rate = params["learning_rate"]
     num_batch = len(train_loader.dataset) / params["batch_size"]
-    tb_writer = SummaryWriter(filename_suffix = sys.argv[1])
+    tb_writer = SummaryWriter("save")
     opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
