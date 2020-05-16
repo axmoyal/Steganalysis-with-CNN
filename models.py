@@ -40,3 +40,31 @@ class SRNET(nn.Module):
             # print( x.shape )
         return x 
 
+
+#for local debugging purposes
+class SmallNet(nn.Module) :
+    def __init__(self):
+        super(SmallNet,self).__init__()
+
+        self.layers = nn.ModuleList()
+
+        #two layers of type 1
+        self.layers.append(nn.Conv2d(3,16, 5))
+        self.layers.append(nn.Conv2d(16,16, 5))
+        self.layers.append(nn.MaxPool2d(5))
+        self.layers.append(nn.MaxPool2d(5))
+        self.layers.append(nn.MaxPool2d(5))
+        self.layers.append(nn.MaxPool2d(5))
+
+
+        #linear
+
+        self.l2 = nn.Linear(16,4)
+
+    def forward(self,x):
+        for layer in self.layers:
+            x = layer(x)
+            # print( x.shape )
+        N, C, H, W = x.shape
+        # print("C: " ,C*H*W)
+        return self.l2(x.view(N,-1))
