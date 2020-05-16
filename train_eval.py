@@ -96,6 +96,18 @@ def eval_model(model,loader, device):
     LOSS=LOSS/num
     return LOSS,accuracy
     
+def overfit_train(frac_test=0.05):
+    device, gpu_ids = get_available_devices()
+    print(device)
+    AlaskaDataset=Alaska("./data","pairs",1, "multi")
+    N=len(AlaskaDataset)
+    lengths = [int(N*(frac_test)),int(N*(1-frac_test))]	
+    train_set,other= td.random_split(AlaskaDataset, lengths)
+    other=0
+    train_loader=td.DataLoader(train_set, batch_size=2)
+    model = SRNET()  
+    model = model.to(device)
+    train(train_loader,train_loader,model, device)
 
 def test(test_loader,Model,path):
 	model = Model
