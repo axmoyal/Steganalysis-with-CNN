@@ -10,5 +10,6 @@
     "num_l2": 5,
     "num_l3": 4,
     "overfitting": "True",
-    "scale": 1
+    "scale": 1,
+    "evaluate_every": 1000
 }
