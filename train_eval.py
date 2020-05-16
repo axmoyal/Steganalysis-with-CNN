@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
+import sys
 
 #from torch.utils.tensorboard import SummaryWriter
 from tensorboardX import SummaryWriter
@@ -34,7 +35,7 @@ def train(train_loader,dev_loader,model, device):
     N_epoch = params["num_epochs"]
     lear_rate = params["learning_rate"]
     num_batch = len(train_loader.dataset) / params["batch_size"]
-    tb_writer = SummaryWriter("save")
+    tb_writer = SummaryWriter("save/"+params["name"]+"/")
     opti= torch.optim.Adam(model.parameters())
     for epoch in range(N_epoch):
         for batch_index,(X,y_label) in enumerate(train_loader):
@@ -108,6 +109,7 @@ def test(test_loader,Model,path):
 if __name__ == '__main__':
     params = load_params()
     save_params(params)
+    params['name'] = sys.argv[1]
     device, gpu_ids = get_available_devices()
     print(device)
     AlaskaDataset= Alaska()
