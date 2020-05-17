@@ -5,19 +5,19 @@ from args import load_params
 from layers import Layer1,Layer2,Layer3,Layer4
 
 
-from efficientnet_pytorch import EfficientNet
+# from efficientnet_pytorch import EfficientNet
 
-class Net(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        self.model = EfficientNet.from_pretrained('efficientnet-b0')
-        # 1280 is the number of neurons in last layer. is diff for diff. architecture
-        self.dense_output = nn.Linear(1280, num_classes)
+# class Net(nn.Module):
+#     def __init__(self, num_classes):
+#         super().__init__()
+#         self.model = EfficientNet.from_pretrained('efficientnet-b0')
+#         # 1280 is the number of neurons in last layer. is diff for diff. architecture
+#         self.dense_output = nn.Linear(1280, num_classes)
 
-    def forward(self, x):
-        feat = self.model.extract_features(x)
-        feat = F.avg_pool2d(feat, feat.size()[2:]).reshape(-1, 1280)
-        return self.dense_output(feat)
+#     def forward(self, x):
+#         feat = self.model.extract_features(x)
+#         feat = F.avg_pool2d(feat, feat.size()[2:]).reshape(-1, 1280)
+#         return self.dense_output(feat)
 
 
 class SRNET(nn.Module):
@@ -88,24 +88,43 @@ class SmallNet(nn.Module) :
 
         #two layers of type 1
         self.layers.append(nn.Conv2d(3,16, 7))
+        self.layers.append(nn.ReLU())
         self.layers.append(nn.Conv2d(16,16, 7))
+        self.layers.append(nn.ReLU())
+        self.layers.append(nn.BatchNorm2d(16))
         self.layers.append(nn.MaxPool2d(3))
         self.layers.append(nn.Conv2d(16,16, 5))
+        self.layers.append(nn.ReLU())
         self.layers.append(nn.Conv2d(16,16, 5))
-        self.layers.append(nn.MaxPool2d(3))
+        self.layers.append(nn.ReLU())
+        self.layers.append(nn.BatchNorm2d(16))
+        self.layers.append(nn.MaxPool2d(5))
+        self.layers.append(nn.Conv2d(16,16,3 ))
+        self.layers.append(nn.ReLU())
         self.layers.append(nn.Conv2d(16,16, 3))
-        self.layers.append(nn.Conv2d(16,16, 3))
+        self.layers.append(nn.ReLU())
+        self.layers.append(nn.BatchNorm2d(16))
         self.layers.append(nn.MaxPool2d(3))
 
 
         #linear
+        self.lins = nn.ModuleList()
+        self.lins.append( nn.Linear(1296,200))
+        self.lins.append(nn.ReLU())
+        self.lins.append(nn.Dropout(0.1))
+        self.lins.append( nn.Linear(200,100))
+        self.lins.append(nn.ReLU())
+        self.lins.append(nn.Dropout(0.1))
+        self.lins.append( nn.Linear(100,4))
 
-        self.l2 = nn.Linear(4096,4)
 
     def forward(self,x):
         for layer in self.layers:
             x = layer(x)
             # print( x.shape )
         N, C, H, W = x.shape
+        x = x.view(N,-1)
         # print("C: " ,C*H*W)
-        return self.l2(x.view(N,-1))
+        for layer in self.lins:
+            x = layer(x)
+        return x

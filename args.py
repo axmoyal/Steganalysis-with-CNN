@@ -5,14 +5,21 @@ import shutil
 
 
 def load_params():
-	"""
-	This functions outputs a dictionary corresponding to the json file.
-	"""
+    """
+    This functions outputs a dictionary corresponding to the json file.
+    """
+    with open("args.json") as json_file:
+        data = json.load(json_file)
 
-	with open("args.json") as json_file:
-		data = json.load(json_file)
-
-	return data
+    if data["mode"] == "single": 
+        data["size_factor"] = 1
+    elif  data["mode"] == "pairs":
+         data["size_factor"] = 2
+    elif  data["mode"] == "quads":
+         data["size_factor"] = 4
+    else: 
+        raise ValueError("choose a correct mode")
+    return data
 
 def save_params(params): 
     assert len(sys.argv) > 1 , "Please provide a name to your model"
