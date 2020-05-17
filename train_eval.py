@@ -72,7 +72,7 @@ def train(train_loader,dev_loader,model, device):
                 loss_value=loss.item()
                 pbar.update(X.shape[0])
                 avg.update(loss_value, X.shape[0])
-                pbar.set_postfix(loss =avg.AverageMeter, epoch= epoch)
+                pbar.set_postfix(loss =avg.avg, epoch= epoch)
                 #print('Batch loss: {}'.format(loss))
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
