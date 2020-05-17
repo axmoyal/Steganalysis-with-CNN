@@ -61,6 +61,7 @@ def train(train_loader,dev_loader,model, device):
             X = X.to(device)
             y_label = y_label.to(device)
             X, y_label = prepbatch(X, y_label)
+            batch_size = X.shape[0]
             #print(y_label)
             opti.zero_grad()
             y_pred=model(X)
@@ -72,7 +73,7 @@ def train(train_loader,dev_loader,model, device):
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
             opti.step()  
-            tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
+            tb_writer.add_scalar('batch train loss', loss_value / batch_size , epoch*num_batch+batch_index)
 
             if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
                 loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
@@ -106,7 +107,7 @@ def eval_model(model,loader, device):
         #print(accuracy)
     accuracy=accuracy.item()/num
     LOSS=LOSS/num
-    print('Num : {}'.format())
+    print('Num : {}'.format(num))
     model.train()
     return LOSS,accuracy
     
