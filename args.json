@@ -4,14 +4,14 @@
     "data_split_frac": 0.999,
     "hidden_dim": 8,
     "image_size": 512,
-    "learning_rate": 0.0001,
+    "learning_rate": 0.0005,
     "mode": "pairs",
     "num_epochs": 50,
     "num_l2": 5,
     "num_l3": 4,
     "overfitting": "True",
     "scale": 1,
-    "evaluate_every": 29,
+    "evaluate_every": 20,
     "grad_max_norm":100000.0,
     "seed" : 669
 }
