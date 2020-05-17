@@ -93,7 +93,9 @@ def eval_model(model,loader, device):
     LOSS=0
     accuracy=0
     num = 0
-    with torch.no_grad():
+    avg = AverageMeter()
+    print("\n")
+    with torch.no_grad(),tqdm(total=len(loader.dataset),position=0, leave=True) as pbar2:
         for batch_index,(X,y_label) in enumerate(loader):
 
             X = X.to(device)
@@ -104,7 +106,10 @@ def eval_model(model,loader, device):
             y_pred=model(X)
             loss=F.cross_entropy(y_pred,y_label)
             LOSS+=loss.item()
-            _, pred_classes = y_pred.max(axis = 1)
+            avg.update(LOSS, X.shape[0])
+            pbar2.update(X.shape[0])
+            pbar2.set_postfix(loss =avg.avg)
+            _, pred_classes = y_pred.max(dim = 1)
             accuracy+=y_label.eq(pred_classes.long()).sum()
             # print("Eval successful")
         #print(accuracy)
@@ -142,7 +147,7 @@ if __name__ == '__main__':
     print(device)
     AlaskaDataset= Alaska()
     #model = Net(4)
-    model = SRNET() 
+    model =SRNET()
     model = model.to(device)
     model.train()
 
