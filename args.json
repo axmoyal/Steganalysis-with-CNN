@@ -12,6 +12,7 @@
     "overfitting": "True",
     "scale": 1,
     "evaluate_every": 1000,
-    "grad_max_norm":5.0
+    "grad_max_norm":5.0,
+    "seed" : 669
 }
 
