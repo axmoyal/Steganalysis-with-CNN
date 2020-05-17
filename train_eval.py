@@ -90,7 +90,7 @@ def eval_model(model,loader, device):
             y_label = y_label.to(device)
 
             X, y_label = prepbatch(X, y_label)
-            num += X.shape[0]
+            num += 1
             y_pred=model(X)
             loss=F.cross_entropy(y_pred,y_label)
             LOSS+=loss.item()
@@ -100,6 +100,7 @@ def eval_model(model,loader, device):
         #print(accuracy)
     accuracy=accuracy.item()/num
     LOSS=LOSS/num
+    print('Num : {}'.format(num))
     model.train()
     return LOSS,accuracy
     
