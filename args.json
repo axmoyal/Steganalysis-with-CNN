@@ -11,7 +11,8 @@
     "num_l3": 4,
     "overfitting": "True",
     "scale": 1,
-    "evaluate_every": 50,
-    "grad_max_norm":1000000
+    "evaluate_every": 1000,
+    "grad_max_norm":100000.0,
+    "seed" : 669
 }
 

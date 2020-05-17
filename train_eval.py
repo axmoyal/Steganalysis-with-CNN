@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
+import random
 import sys
 
 #from torch.utils.tensorboard import SummaryWriter
@@ -12,6 +13,8 @@ from dataload import Alaska
 from models import *
 from utils import get_available_devices
 from args import *
+
+
 params = load_params()
 
 def get_dataloaders(alaska_dataset):
@@ -30,6 +33,11 @@ def prepbatch(X, y) :
     X = X.view(-1, 3, params["image_size"],  params["image_size"])
     y = y.view(-1)
     return X, y
+
+def init_seed() :
+    random.seed(params["seed"])
+    torch.manual_seed(params["seed"])
+    torch.cuda.manual_seed_all(params["seed"])
 
         
 # train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
