@@ -3,11 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from args import load_params
 from layers import Layer1,Layer2,Layer3,Layer4
-
+import torchvision.models as models
 
 # from efficientnet_pytorch import EfficientNet
 
-# class Net(nn.Module):
+# class EfficientNet(nn.Module):
 #     def __init__(self, num_classes):
 #         super().__init__()
 #         self.model = EfficientNet.from_pretrained('efficientnet-b0')
@@ -19,6 +19,15 @@ from layers import Layer1,Layer2,Layer3,Layer4
 #         feat = F.avg_pool2d(feat, feat.size()[2:]).reshape(-1, 1280)
 #         return self.dense_output(feat)
 
+
+class ResNet(nn.Module):
+    def __init__(self, num_classes):
+       super().__init__()
+       self.model_pretrained=models.resnet18(pretrained=True);
+       num_ftrs = self.model_pretrained.fc.in_features;
+       self.model_pretrained.fc = nn.Linear(num_ftrs, num_classes);
+    def forward(self,x):
+        return self.model_pretrained(x);
 
 class SRNET(nn.Module):
 
