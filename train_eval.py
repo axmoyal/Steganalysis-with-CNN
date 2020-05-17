@@ -26,13 +26,13 @@ def get_dataloaders(alaska_dataset):
     print("Dev set:{}".format(int(N*frac_test)))
     lengths = [int(N*(1-frac_test)), int(N*frac_test)]
     train_set, dev_set = td.random_split(alaska_dataset, lengths)
-    train_loader=td.DataLoader(train_set, batch_size=b_size, shuffle = True)
+    train_loader=td.DataLoader(train_set, batch_size=b_size, shuffle = True, drop_last = True)
     if params["overfitting"] =="True":
         print("Overfitting mode")
-        dev_loader=td.DataLoader(train_set, batch_size=b_size)
+        dev_loader=td.DataLoader(train_set, batch_size=b_size, drop_last = True)
     else:
         print("Training mode")
-        dev_loader=td.DataLoader(dev_set, batch_size=b_size)
+        dev_loader=td.DataLoader(dev_set, batch_size=b_size, drop_last = True)
 
     return train_loader,dev_loader
 
@@ -77,7 +77,7 @@ def train(train_loader,dev_loader,model, device):
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
                 opti.step()  
-                tb_writer.add_scalar('batch train loss', loss_value / batch_size , epoch*num_batch+batch_index)
+                tb_writer.add_scalar('batch train loss', loss_value , epoch*num_batch+batch_index)
 
                 if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
                     loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
@@ -114,7 +114,7 @@ def eval_model(model,loader, device):
             # print("Eval successful")
         #print(accuracy)
     accuracy=accuracy.item()/num
-    LOSS=LOSS/num
+    LOSS=LOSS/len(loader)
     print('Num : {}'.format(num))
     model.train()
     return LOSS,accuracy
