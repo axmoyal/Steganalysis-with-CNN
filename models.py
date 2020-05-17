@@ -87,17 +87,20 @@ class SmallNet(nn.Module) :
         self.layers = nn.ModuleList()
 
         #two layers of type 1
-        self.layers.append(nn.Conv2d(3,16, 5))
+        self.layers.append(nn.Conv2d(3,16, 7))
+        self.layers.append(nn.Conv2d(16,16, 7))
+        self.layers.append(nn.MaxPool2d(3))
         self.layers.append(nn.Conv2d(16,16, 5))
-        self.layers.append(nn.MaxPool2d(5))
-        self.layers.append(nn.MaxPool2d(5))
-        self.layers.append(nn.MaxPool2d(5))
-        self.layers.append(nn.MaxPool2d(5))
+        self.layers.append(nn.Conv2d(16,16, 5))
+        self.layers.append(nn.MaxPool2d(3))
+        self.layers.append(nn.Conv2d(16,16, 3))
+        self.layers.append(nn.Conv2d(16,16, 3))
+        self.layers.append(nn.MaxPool2d(3))
 
 
         #linear
 
-        self.l2 = nn.Linear(16,4)
+        self.l2 = nn.Linear(4096,4)
 
     def forward(self,x):
         for layer in self.layers:
