@@ -95,6 +95,7 @@ def eval_model(model,loader, device):
     #print(accuracy)
     accuracy=accuracy.item()/num
     LOSS=LOSS/num
+    model.train()
     return LOSS,accuracy
     
 def overfit_train(frac_test=0.05):
