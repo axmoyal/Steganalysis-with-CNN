@@ -26,13 +26,13 @@ def get_dataloaders(alaska_dataset):
     print("Dev set:{}".format(int(N*frac_test)))
     lengths = [int(N*(1-frac_test)), int(N*frac_test)]
     train_set, dev_set = td.random_split(alaska_dataset, lengths)
-    train_loader=td.DataLoader(train_set, batch_size=b_size, shuffle = True)
+    train_loader=td.DataLoader(train_set, batch_size=b_size, shuffle = True, drop_last = True)
     if params["overfitting"] =="True":
         print("Overfitting mode")
-        dev_loader=td.DataLoader(train_set, batch_size=b_size)
+        dev_loader=td.DataLoader(train_set, batch_size=b_size, drop_last = True)
     else:
         print("Training mode")
-        dev_loader=td.DataLoader(dev_set, batch_size=b_size)
+        dev_loader=td.DataLoader(dev_set, batch_size=b_size, drop_last = True)
 
     return train_loader,dev_loader
 
@@ -72,7 +72,7 @@ def train(train_loader,dev_loader,model, device):
                 loss_value=loss.item()
                 pbar.update(X.shape[0])
                 avg.update(loss_value, X.shape[0])
-                pbar.set_postfix(loss =avg.avg, epoch= epoch)
+                pbar.set_postfix(loss =avg.AverageMeter, epoch= epoch)
                 #print('Batch loss: {}'.format(loss))
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
