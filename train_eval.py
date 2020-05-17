@@ -65,12 +65,13 @@ def train(train_loader,dev_loader,model, device):
             nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
             opti.step()  
             tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
-            if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
-                loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
-                print('Dev Loss: {}'.format(loss_dev))
-                print('Accuracy: {}'.format(accuracy_dev))
-                tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
-                tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
+
+            #if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
+        loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
+        print('Dev Loss: {}'.format(loss_dev))
+        print('Accuracy: {}'.format(accuracy_dev))
+        tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
+        tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
             #torch.save(model.state_dict(), path) 
 
 # evaluate the model on a loader.
