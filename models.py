@@ -24,8 +24,8 @@ class ResNet(nn.Module):
     def __init__(self, num_classes):
        super().__init__()
        self.model_pretrained=models.resnet18(pretrained=True);
-       num_ftrs = self.model_pretrained.fc.in_features;
-       self.model_pretrained.fc = nn.Linear(num_ftrs, num_classes);
+       num_features = self.model_pretrained.fc.in_features;
+       self.model_pretrained.fc = nn.Linear(num_features, num_classes);
     def forward(self,x):
         return self.model_pretrained(x);
 
