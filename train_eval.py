@@ -55,10 +55,11 @@ def train(train_loader,dev_loader,model, device):
     tb_writer = SummaryWriter("save/"+params["name"]+"/")
     opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
     avg = AverageMeter()
+    time2eval = params["evaluate_every"]
     for epoch in range(N_epoch):
         print("Starting Epoch: ", epoch)
         avg.reset()
-        with torch.enable_grad(), tqdm(total=len(train_loader.dataset)) as pbar:
+        with torch.enable_grad(), tqdm(total=len(train_loader.dataset)*params["size_factor"]) as pbar:
             for batch_index,(X,y_label) in enumerate(train_loader):
                 X = X.to(device)
                 y_label = y_label.to(device)
@@ -70,16 +71,17 @@ def train(train_loader,dev_loader,model, device):
 
                 loss=F.cross_entropy(y_pred,y_label)           
                 loss_value=loss.item()
-                pbar.update(X.shape[0])
-                avg.update(loss_value, X.shape[0])
+                pbar.update(batch_size)
+                avg.update(loss_value,batch_size)
                 pbar.set_postfix(loss =avg.avg, epoch= epoch)
                 #print('Batch loss: {}'.format(loss))
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
                 opti.step()  
                 tb_writer.add_scalar('batch train loss', loss_value , epoch*num_batch+batch_index)
-
-                if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
+                time2eval -= batch_size
+                if time2eval <= 0:
+                    time2eval = params["evaluate_every"]
                     loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
                     print('Dev Loss: {}'.format(loss_dev))
                     print('Accuracy: {}'.format(accuracy_dev))
@@ -94,8 +96,8 @@ def eval_model(model,loader, device):
     accuracy=0
     num = 0
     avg = AverageMeter()
-    print("\n")
-    with torch.no_grad(),tqdm(total=len(loader.dataset),position=0, leave=True) as pbar2:
+    print("")
+    with torch.no_grad(),tqdm(total=len(loader.dataset)*params["size_factor"],position=0, leave=True) as pbar2:
         for batch_index,(X,y_label) in enumerate(loader):
 
             X = X.to(device)
@@ -110,6 +112,7 @@ def eval_model(model,loader, device):
             pbar2.update(X.shape[0])
             pbar2.set_postfix(loss =avg.avg)
             _, pred_classes = y_pred.max(dim = 1)
+            print(pred_classes)
             accuracy+=y_label.eq(pred_classes.long()).sum()
             # print("Eval successful")
         #print(accuracy)
@@ -147,7 +150,7 @@ if __name__ == '__main__':
     print(device)
     AlaskaDataset= Alaska()
     #model = Net(4)
-    model =SRNET()
+    model =SmallNet()
     model = model.to(device)
     model.train()
 
