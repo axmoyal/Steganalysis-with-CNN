@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import torch.utils.data as td
 import random
 import sys
+from tqdm import tqdm
 
 #from torch.utils.tensorboard import SummaryWriter
 from tensorboardX import SummaryWriter
@@ -48,7 +49,8 @@ def train(train_loader,dev_loader,model, device):
     tb_writer = SummaryWriter("save/"+params["name"]+"/")
     opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
     for epoch in range(N_epoch):
-        for batch_index,(X,y_label) in enumerate(train_loader):
+        print("Starting Epoch: ", epoch)
+        for (batch_index,(X,y_label)), _ in zip(enumerate(train_loader), tqdm(range(len(train_loader)))):
 
             X = X.to(device)
             y_label = y_label.to(device)
@@ -60,7 +62,7 @@ def train(train_loader,dev_loader,model, device):
 
             loss=F.cross_entropy(y_pred,y_label)           
             loss_value=loss.item()
-            print('Batch loss: {}'.format(loss))
+            #print('Batch loss: {}'.format(loss))
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
             opti.step()  
