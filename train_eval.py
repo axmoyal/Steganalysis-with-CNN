@@ -130,6 +130,7 @@ if __name__ == '__main__':
     #model = Net(4)
     model = SRNET() 
     model = model.to(device)
+    model.train()
 
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
 
