@@ -53,7 +53,7 @@ def train(train_loader,dev_loader,model, device):
             X = X.to(device)
             y_label = y_label.to(device)
             X, y_label = prepbatch(X, y_label)
-            print(y_label)
+            #print(y_label)
             opti.zero_grad()
             y_pred=model(X)
            
