@@ -26,8 +26,14 @@ def get_dataloaders(alaska_dataset):
     print("Dev set:{}".format(int(N*frac_test)))
     lengths = [int(N*(1-frac_test)), int(N*frac_test)]
     train_set, dev_set = td.random_split(alaska_dataset, lengths)
-    train_loader=td.DataLoader(train_set, batch_size=b_size)
-    dev_loader=td.DataLoader(dev_set, batch_size=b_size)
+    train_loader=td.DataLoader(train_set, batch_size=b_size, shuffle = True)
+    if params["overfitting"] =="True":
+        print("Overfitting mode")
+        dev_loader=td.DataLoader(train_set, batch_size=b_size)
+    else:
+        print("Training mode")
+        dev_loader=td.DataLoader(dev_set, batch_size=b_size)
+
     return train_loader,dev_loader
 
 def prepbatch(X, y) : 
@@ -138,9 +144,4 @@ if __name__ == '__main__':
 
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
 
-    if params["overfitting"] =="True":
-        print("Overfitting mode")
-        train(train_loader,train_loader,model,device)
-    else:
-        print("Training mode")
-        train(train_loader,dev_loader,model, device)
+    train(train_loader,dev_loader,model, device)
