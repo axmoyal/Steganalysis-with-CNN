@@ -4,7 +4,7 @@
     "data_split_frac": 0.999,
     "hidden_dim": 16,
     "image_size": 512,
-    "learning_rate": 0.0001,
+    "learning_rate": 0.001,
     "mode": "single",
     "num_epochs": 50,
     "num_l2": 5,
