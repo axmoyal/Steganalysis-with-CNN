@@ -68,12 +68,12 @@ def train(train_loader,dev_loader,model, device):
             opti.step()  
             tb_writer.add_scalar('batch train loss', loss_value, epoch*num_batch+batch_index)
 
-            #if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
-        loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
-        print('Dev Loss: {}'.format(loss_dev))
-        print('Accuracy: {}'.format(accuracy_dev))
-        tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
-        tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
+            if batch_index%params["evaluate_every"]==params["evaluate_every"]-1:
+                loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
+                print('Dev Loss: {}'.format(loss_dev))
+                print('Accuracy: {}'.format(accuracy_dev))
+                tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
+                tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
             #torch.save(model.state_dict(), path) 
 
 # evaluate the model on a loader.
@@ -82,20 +82,22 @@ def eval_model(model,loader, device):
     LOSS=0
     accuracy=0
     num = 0
-    for batch_index,(X,y_label) in enumerate(loader):
 
-        X = X.to(device)
-        y_label = y_label.to(device)
+    with torch.no_grad():
+        for batch_index,(X,y_label) in enumerate(loader):
 
-        X, y_label = prepbatch(X, y_label)
-        num += X.shape[0]
-        y_pred=model(X)
-        loss=F.cross_entropy(y_pred,y_label)
-        LOSS+=loss.item()
-        _, pred_classes = y_pred.max(axis = 1)
-        accuracy+=y_label.eq(pred_classes.long()).sum()
-        # print("Eval successful")
-    #print(accuracy)
+            X = X.to(device)
+            y_label = y_label.to(device)
+
+            X, y_label = prepbatch(X, y_label)
+            num += X.shape[0]
+            y_pred=model(X)
+            loss=F.cross_entropy(y_pred,y_label)
+            LOSS+=loss.item()
+            _, pred_classes = y_pred.max(axis = 1)
+            accuracy+=y_label.eq(pred_classes.long()).sum()
+            # print("Eval successful")
+        #print(accuracy)
     accuracy=accuracy.item()/num
     LOSS=LOSS/num
     model.train()
