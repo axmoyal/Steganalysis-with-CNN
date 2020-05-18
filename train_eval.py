@@ -12,7 +12,7 @@ from tqdm import tqdm
 from tensorboardX import SummaryWriter
 from dataload import Alaska
 from models import *
-from utils import get_available_devices, AverageMeter
+from utils import get_available_devices, AverageMeter, alaska_weighted_auc
 from args import *
 
 
@@ -97,7 +97,10 @@ def eval_model(model,loader, device):
     accuracy=0
     num = 0
     avg = AverageMeter()
-    print("")
+
+    total_labels = []
+    total_predictions = [] 
+
     with torch.no_grad(),tqdm(total=len(loader.dataset)*params["size_factor"],position=0, leave=True) as pbar2:
         for batch_index,(X,y_label) in enumerate(loader):
 
@@ -106,16 +109,29 @@ def eval_model(model,loader, device):
 
             X, y_label = prepbatch(X, y_label)
             num += X.shape[0]
+
             y_pred=model(X)
+
+            scores = F.softmax(y_pred)
+            total_predictions.append(np.array(scores))
+            total_labels.append(np.array(y_label))
+
+
             loss=F.cross_entropy(y_pred,y_label)
             LOSS+=loss.item()
             avg.update(LOSS, 1)
             pbar2.update(X.shape[0])
             pbar2.set_postfix(loss =avg.avg)
+
             _, pred_classes = y_pred.max(dim = 1)
             accuracy+=y_label.eq(pred_classes.long()).sum()
             # print("Eval successful")
         #print(accuracy)
+    total_predictions = np.concat(total_predictions, axis = 0)
+    total_labels = np.concat(total_labels, axis = 0)
+
+    kaggle_scores = get_kaggle_score(total_predictions, total_labels)
+
     accuracy=accuracy.item()/num
     LOSS=LOSS/len(loader)
     print('Num : {}'.format(num))
@@ -125,8 +141,19 @@ def eval_model(model,loader, device):
         print("New best validation loss")
         print("Saving model...")
         torch.save(model.state_dict(), "save/" + params["name"] + "/" + params["name"] + ".pkl")
+        params["best_val_loss"] = LOSS
 
     return LOSS,accuracy
+
+def get_kaggle_score(y_pred, y_label):
+    if params['classifier'] == "multi" :
+        y_label = (y_label >= 1).astype(int)
+        temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
+        scores = temp / (y_pred + temp)
+        return alaska_weighted_auc(y_label, scores)
+
+
+
 
 def test(test_loader,Model,path):
 	model = Model
