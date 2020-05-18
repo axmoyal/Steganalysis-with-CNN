@@ -23,11 +23,11 @@ import torchvision.models as models
 class ResNet(nn.Module):
     def __init__(self, num_classes):
        super().__init__()
-       self.model_pretrained=models.resnet18(pretrained=True);
-       num_features = self.model_pretrained.fc.in_features;
-       self.model_pretrained.fc = nn.Linear(num_features, num_classes);
+       self.model_pretrained=models.resnet18(pretrained=True)
+       num_features = self.model_pretrained.fc.in_features
+       self.model_pretrained.fc = nn.Linear(num_features, num_classes)
     def forward(self,x):
-        return self.model_pretrained(x);
+        return self.model_pretrained(x)
 
 class SRNET(nn.Module):
 

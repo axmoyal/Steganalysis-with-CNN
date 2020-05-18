@@ -9,12 +9,12 @@ from torch.utils.data import Dataset, DataLoader
 import imageio
 import numpy as np
 from args import load_params
-from numpy import r_
-import scipy
+from utils import dct2
 
 NUM_IM_PER_FILE = 75000 #Number of images per file
 NUM_TEST_IM = 5000 #Number of test images
 NUM_FILES = 4 #Number of files
+params = load_params()
 
 
 
@@ -42,7 +42,6 @@ class Alaska(Dataset):
 
     def __init__(self):
         ##################### GET PARAMS ######################
-        params = load_params()
         mode = params["mode"]
         scale = params["scale"]
         classifier = params["classifier"]
@@ -51,7 +50,8 @@ class Alaska(Dataset):
         ######################## INIT #########################
         self.path = dirpath
         self.scale = scale
-        self.channel_mode = params["channel_mode"]
+        self.isfourier = params["fourier"]
+        self.isRGB = params["rgb"]
         self.isbinary = True if classifier == "binary" else False
         
         #Initiate mode specific data
@@ -69,6 +69,7 @@ class Alaska(Dataset):
             self.getdatapoint = quads
         else : 
             raise ValueError ( mode + " is not a valid mode")
+
     """ 
     Description: returns size of dataset. 
     """
@@ -192,7 +193,11 @@ Args:
     transformation: number between 1 and 8 to decide transformation
 """
 def transform(image, transformation): 
-    image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
+    if params["channel_mode"] == "fourier":
+        image = dct2(image)
+    else: 
+        image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
+
     if transformation == 0: return image
     if transformation == 1: return image.rot90(1, [1, 2])
     if transformation == 2: return image.rot90(2, [1, 2])

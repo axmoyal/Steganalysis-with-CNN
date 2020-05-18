@@ -13,5 +13,6 @@
     "num_l3": 4,
     "overfitting": "True",
     "scale": 1,
-    "seed": 669
+    "seed": 669,
+    "channel_mode": "fourier"
 }
