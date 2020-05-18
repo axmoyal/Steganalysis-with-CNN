@@ -97,34 +97,15 @@ class SmallNet(nn.Module) :
 
         #two layers of type 1
         self.layers.append(nn.Conv2d(3,16, 7))
-        self.layers.append(nn.ReLU())
-        self.layers.append(nn.Conv2d(16,16, 7))
-        self.layers.append(nn.ReLU())
-        self.layers.append(nn.BatchNorm2d(16))
-        self.layers.append(nn.MaxPool2d(3))
-        self.layers.append(nn.Conv2d(16,16, 5))
-        self.layers.append(nn.ReLU())
-        self.layers.append(nn.Conv2d(16,16, 5))
-        self.layers.append(nn.ReLU())
-        self.layers.append(nn.BatchNorm2d(16))
+
         self.layers.append(nn.MaxPool2d(5))
-        self.layers.append(nn.Conv2d(16,16,3 ))
-        self.layers.append(nn.ReLU())
-        self.layers.append(nn.Conv2d(16,16, 3))
-        self.layers.append(nn.ReLU())
-        self.layers.append(nn.BatchNorm2d(16))
-        self.layers.append(nn.MaxPool2d(3))
+        self.layers.append(nn.MaxPool2d(5))
+        self.layers.append(nn.MaxPool2d(5))
 
 
         #linear
         self.lins = nn.ModuleList()
-        self.lins.append( nn.Linear(1296,200))
-        self.lins.append(nn.ReLU())
-        self.lins.append(nn.Dropout(0.1))
-        self.lins.append( nn.Linear(200,100))
-        self.lins.append(nn.ReLU())
-        self.lins.append(nn.Dropout(0.1))
-        self.lins.append( nn.Linear(100,4))
+        self.lins.append( nn.Linear(256,4))
 
 
     def forward(self,x):

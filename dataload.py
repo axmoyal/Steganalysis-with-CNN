@@ -50,8 +50,6 @@ class Alaska(Dataset):
         ######################## INIT #########################
         self.path = dirpath
         self.scale = scale
-        self.isfourier = params["fourier"]
-        self.isRGB = params["rgb"]
         self.isbinary = True if classifier == "binary" else False
         
         #Initiate mode specific data

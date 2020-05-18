@@ -35,9 +35,11 @@ dctog = np.zeros(imsize)
 # Do 8x8 DCT on image (in-place)
 for i in r_[:imsize[0]:8]:
     for j in r_[:imsize[1]:8]:
-        dct[i:(i+8),j:(j+8)] = dct2( im[i:(i+8),j:(j+8)] -128 )
-        dctog[i:(i+8),j:(j+8)] = dct2( imog[i:(i+8),j:(j+8)]-128 )
+        dct[i:(i+8),j:(j+8)] = dct2( im[i:(i+8),j:(j+8)]  )
+        dctog[i:(i+8),j:(j+8)] = dct2( imog[i:(i+8),j:(j+8)] )
         plt.subplot(331)
+        print(dct[i:(i+8),j:(j+8), 0])
+        print(dct[i:(i+8),j:(j+8)].shape)
         plt.imshow(dct[i:(i+8),j:(j+8),0]+ 128)
         plt.subplot(332)
         plt.imshow(dctog[i:(i+8),j:(j+8),0]+128)

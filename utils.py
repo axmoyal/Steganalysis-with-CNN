@@ -3,6 +3,8 @@ import torch
 import numpy as np
 from numpy import r_
 import scipy
+from scipy import signal
+from scipy import misc # pip install Pillow
 
 
 
@@ -12,13 +14,13 @@ def dct2(im):
     return jpeg dct of image
     """
     im2dct = lambda x : scipy.fftpack.dct( scipy.fftpack.dct( x, axis=0, norm='ortho' ), axis=1, norm='ortho' )
-    im = rgb2ycb(np.array(im))
+    im = rgb2ycb(np.array(im)) 
     imsize = im.shape
     dct = np.zeros(imsize)
     for i in r_[:imsize[0]:8]:
         for j in r_[:imsize[1]:8]:
-            dct[i:(i+8),j:(j+8)] = im2dct( im[i:(i+8),j:(j+8)] - 128 )
-    return torch.tensor(im, dtype= torch.float).permute(2,0,1)
+            dct[i:(i+8),j:(j+8)] = im2dct( im[i:(i+8),j:(j+8)] )
+    return torch.tensor(dct, dtype= torch.float).permute(2,0,1)
 
 def rgb2ycb(im): 
     out = np.zeros(im.shape) 
