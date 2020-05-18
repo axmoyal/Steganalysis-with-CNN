@@ -29,7 +29,7 @@ def test(test_loader, model, device):
     scores = multi_to_binary(total_predictions)
 
     
-    df = pd.DataFrame({'Id':[range(1,5000)], 'Label':scores})
+    df = pd.DataFrame({'Id':[np.arange(1,5000)], 'Label':scores})
     df['Id'].apply(lambda x : f'{x:04}')
     df.to_csv("save/" + name + "/" +name +".csv")
 
