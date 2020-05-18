@@ -17,3 +17,4 @@ dependencies:
   - pytorch 
   - cudatoolkit = 10.1.243
   - imageio
+  - sklearn
