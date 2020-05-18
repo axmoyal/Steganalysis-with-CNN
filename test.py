@@ -31,7 +31,7 @@ def test(test_loader, model, device):
     print(len(np.arange(1,5001)))
     print(len(scores))
     df = pd.DataFrame({'Id':np.arange(1,5001), 'Label':scores})
-    df['Id'].apply(lambda x : f'{x:04}')
+    df['Id'] = df['Id'].apply(lambda x : f'{x:04}' + ".jpg")
     df.to_csv("save/" + name + "/" +name +".csv")
 
 def multi_to_binary(y_pred):
