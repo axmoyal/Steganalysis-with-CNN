@@ -4,11 +4,11 @@ import sys
 import shutil
 
 
-def load_params():
+def load_params(file = "args.json"):
     """
     This functions outputs a dictionary corresponding to the json file.
     """
-    with open("args.json") as json_file:
+    with open(file) as json_file:
         data = json.load(json_file)
 
     if data["mode"] == "single": 
