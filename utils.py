@@ -1,5 +1,6 @@
 import sklearn.metrics as metrics 
 import torch
+import numpy as np
 
 def get_available_devices():
     """Get IDs of all available GPUs.
@@ -46,7 +47,7 @@ class AverageMeter:
         self.count += num_samples
         self.sum += val#* num_samples
         self.avg = self.sum / self.count
-        
+
 def alaska_weighted_auc(y_true, y_valid):
     tpr_thresholds = [0.0, 0.4, 1.0]
     weights = [2,   1]
