@@ -9,6 +9,8 @@ from torch.utils.data import Dataset, DataLoader
 import imageio
 import numpy as np
 from args import load_params
+from numpy import r_
+import scipy
 
 NUM_IM_PER_FILE = 75000 #Number of images per file
 NUM_TEST_IM = 5000 #Number of test images
@@ -49,6 +51,7 @@ class Alaska(Dataset):
         ######################## INIT #########################
         self.path = dirpath
         self.scale = scale
+        self.channel_mode = params["channel_mode"]
         self.isbinary = True if classifier == "binary" else False
         
         #Initiate mode specific data

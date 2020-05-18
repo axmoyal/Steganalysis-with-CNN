@@ -12,7 +12,7 @@ from tqdm import tqdm
 from tensorboardX import SummaryWriter
 from dataload import Alaska
 from models import *
-from utils import get_available_devices, AverageMeter
+from utils import get_available_devices, AverageMeter, alaska_weighted_auc
 from args import *
 
 
@@ -51,7 +51,7 @@ def init_seed() :
 def train(train_loader,dev_loader,model, device):
     N_epoch = params["num_epochs"]
     lear_rate = params["learning_rate"]
-    num_batch = len(train_loader.dataset) / params["batch_size"]
+    images_seen = 0
     tb_writer = SummaryWriter("save/"+params["name"]+"/")
     opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
     avg = AverageMeter()
@@ -72,21 +72,24 @@ def train(train_loader,dev_loader,model, device):
                 loss=F.cross_entropy(y_pred,y_label)           
                 loss_value=loss.item()
                 pbar.update(batch_size)
-                avg.update(loss_value,batch_size)
+                avg.update(loss_value,1)
                 pbar.set_postfix(loss =avg.avg, epoch= epoch)
                 #print('Batch loss: {}'.format(loss))
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
                 opti.step()  
-                tb_writer.add_scalar('batch train loss', loss_value , epoch*num_batch+batch_index)
+                tb_writer.add_scalar('batch train loss', loss_value , images_seen)
+                images_seen += batch_size
                 time2eval -= batch_size
                 if time2eval <= 0:
                     time2eval = params["evaluate_every"]
-                    loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
+                    loss_dev,accuracy_dev, kaggle_score_dev =eval_model(model,dev_loader, device)
                     print('Dev Loss: {}'.format(loss_dev))
                     print('Accuracy: {}'.format(accuracy_dev))
-                    tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
-                    tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
+                    print('Kaggle score: {}'.format(kaggle_score_dev))
+                    tb_writer.add_scalar('dev loss', loss_dev, images_seen)
+                    tb_writer.add_scalar('dev accuracy', accuracy_dev, images_seen)
+                    tb_writer.add_scalar('kaggle score', kaggle_score_dev, images_seen)
                 #torch.save(model.state_dict(), path) 
 
 # evaluate the model on a loader.
@@ -96,7 +99,10 @@ def eval_model(model,loader, device):
     accuracy=0
     num = 0
     avg = AverageMeter()
-    print("")
+
+    total_labels = []
+    total_predictions = [] 
+
     with torch.no_grad(),tqdm(total=len(loader.dataset)*params["size_factor"],position=0, leave=True) as pbar2:
         for batch_index,(X,y_label) in enumerate(loader):
 
@@ -105,35 +111,51 @@ def eval_model(model,loader, device):
 
             X, y_label = prepbatch(X, y_label)
             num += X.shape[0]
+
             y_pred=model(X)
+
+            scores = F.softmax(y_pred, dim = 1)
+            total_predictions.append(np.array(scores.cpu()))
+            total_labels.append(np.array(y_label.cpu()))
+
+
             loss=F.cross_entropy(y_pred,y_label)
             LOSS+=loss.item()
-            avg.update(LOSS, X.shape[0])
+            avg.update(LOSS, 1)
             pbar2.update(X.shape[0])
             pbar2.set_postfix(loss =avg.avg)
+
             _, pred_classes = y_pred.max(dim = 1)
-            print(pred_classes)
             accuracy+=y_label.eq(pred_classes.long()).sum()
             # print("Eval successful")
         #print(accuracy)
+    total_predictions = np.concatenate(total_predictions, axis = 0)
+    total_labels = np.concatenate(total_labels, axis = 0)
+
+    kaggle_score = get_kaggle_score(total_predictions, total_labels)
+
     accuracy=accuracy.item()/num
     LOSS=LOSS/len(loader)
     print('Num : {}'.format(num))
     model.train()
-    return LOSS,accuracy
-    
-def overfit_train(frac_test=0.05):
-    device, gpu_ids = get_available_devices()
-    print(device)
-    AlaskaDataset=Alaska("./data","pairs",1, "multi")
-    N=len(AlaskaDataset)
-    lengths = [int(N*(frac_test)),int(N*(1-frac_test))]	
-    train_set,other= td.random_split(AlaskaDataset, lengths)
-    other=0
-    train_loader=td.DataLoader(train_set, batch_size=2)
-    model = SRNET()  
-    model = model.to(device)
-    train(train_loader,train_loader,model, device)
+
+    if (params["best_val_loss"]==None) or (params["best_val_loss"] > LOSS):
+        print("New best validation loss")
+        print("Saving model...")
+        torch.save(model.state_dict(), "save/" + params["name"] + "/" + params["name"] + ".pkl")
+        params["best_val_loss"] = LOSS
+
+    return LOSS,accuracy,kaggle_score
+
+def get_kaggle_score(y_pred, y_label):
+    if params['classifier'] == "multi" :
+        y_label = (y_label >= 1).astype(int)
+        temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
+        scores = temp / (y_pred[:,0] + temp)
+        return alaska_weighted_auc(y_label, scores)
+
+
+
 
 def test(test_loader,Model,path):
 	model = Model
@@ -143,6 +165,8 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
+    init_seed()
+
     params = load_params()
     save_params(params)
     params['name'] = sys.argv[1]
@@ -150,10 +174,12 @@ if __name__ == '__main__':
     print(device)
     AlaskaDataset= Alaska()
     #model = Net(4)
-    model =SRNET()
+    #model =SmallNet()
+    #model = SRNET()
+    model = ResNet(4)
     model = model.to(device)
     model.train()
 
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
-
+    params["best_val_loss"]=None
     train(train_loader,dev_loader,model, device)
