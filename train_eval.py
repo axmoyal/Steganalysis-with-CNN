@@ -143,6 +143,7 @@ def test(test_loader,Model,path):
 	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
+    init_seed()
     params = load_params()
     save_params(params)
     params['name'] = sys.argv[1]
