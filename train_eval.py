@@ -89,6 +89,7 @@ def train(train_loader,dev_loader,model, device):
                     print('Kaggle score: {}'.format(kaggle_score_dev))
                     tb_writer.add_scalar('dev loss', loss_dev, images_seen)
                     tb_writer.add_scalar('dev accuracy', accuracy_dev, images_seen)
+                    tb_writer.add_scalar('kaggle score', kaggle_score_dev, images_seen)
                 #torch.save(model.state_dict(), path) 
 
 # evaluate the model on a loader.
@@ -130,8 +131,7 @@ def eval_model(model,loader, device):
         #print(accuracy)
     total_predictions = np.concatenate(total_predictions, axis = 0)
     total_labels = np.concatenate(total_labels, axis = 0)
-    print(total_predictions)
-    print(total_labels)
+
     kaggle_score = get_kaggle_score(total_predictions, total_labels)
 
     accuracy=accuracy.item()/num
