@@ -14,7 +14,7 @@ from dataload import Alaska
 from models import *
 from utils import get_available_devices, AverageMeter, alaska_weighted_auc
 from args import *
-
+from test import multi_to_binary
 
 params = load_params()
 
@@ -150,9 +150,10 @@ def eval_model(model,loader, device):
 def get_kaggle_score(y_pred, y_label):
     if params['classifier'] == "multi" :
         y_label = (y_label >= 1).astype(int)
-        temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
-        scores = temp / (y_pred[:,0] + temp)
+        scores = multi_to_binary(y_pred)
         return alaska_weighted_auc(y_label, scores)
+    else:
+        return alaska_weighted_auc(y_label, y_pred)
 
 
 if __name__ == '__main__':
