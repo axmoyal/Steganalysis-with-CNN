@@ -151,7 +151,7 @@ def get_kaggle_score(y_pred, y_label):
     if params['classifier'] == "multi" :
         y_label = (y_label >= 1).astype(int)
         temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
-        scores = temp / (y_pred + temp)
+        scores = temp / (y_pred[:,0] + temp)
         return alaska_weighted_auc(y_label, scores)
 
 
