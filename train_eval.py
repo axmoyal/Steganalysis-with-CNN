@@ -72,7 +72,7 @@ def train(train_loader,dev_loader,model, device):
                 loss=F.cross_entropy(y_pred,y_label)           
                 loss_value=loss.item()
                 pbar.update(batch_size)
-                avg.update(loss_value,batch_size)
+                avg.update(loss_value,1)
                 pbar.set_postfix(loss =avg.avg, epoch= epoch)
                 #print('Batch loss: {}'.format(loss))
                 loss.backward()
@@ -109,7 +109,7 @@ def eval_model(model,loader, device):
             y_pred=model(X)
             loss=F.cross_entropy(y_pred,y_label)
             LOSS+=loss.item()
-            avg.update(LOSS, X.shape[0])
+            avg.update(LOSS, 1)
             pbar2.update(X.shape[0])
             pbar2.set_postfix(loss =avg.avg)
             _, pred_classes = y_pred.max(dim = 1)
@@ -120,20 +120,13 @@ def eval_model(model,loader, device):
     LOSS=LOSS/len(loader)
     print('Num : {}'.format(num))
     model.train()
+
+    if (params["best_val_loss"]==None) or (params["best_val_loss"] > LOSS):
+        print("New best validation loss")
+        print("Saving model...")
+        torch.save(model.state_dict(), ".save/")
+
     return LOSS,accuracy
-    
-def overfit_train(frac_test=0.05):
-    device, gpu_ids = get_available_devices()
-    print(device)
-    AlaskaDataset=Alaska("./data","pairs",1, "multi")
-    N=len(AlaskaDataset)
-    lengths = [int(N*(frac_test)),int(N*(1-frac_test))]	
-    train_set,other= td.random_split(AlaskaDataset, lengths)
-    other=0
-    train_loader=td.DataLoader(train_set, batch_size=2)
-    model = SRNET()  
-    model = model.to(device)
-    train(train_loader,train_loader,model, device)
 
 def test(test_loader,Model,path):
 	model = Model
@@ -144,6 +137,7 @@ def test(test_loader,Model,path):
 
 if __name__ == '__main__':
     init_seed()
+
     params = load_params()
     save_params(params)
     params['name'] = sys.argv[1]
@@ -158,5 +152,5 @@ if __name__ == '__main__':
     model.train()
 
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
-
+    params["best_val_loss"]=None
     train(train_loader,dev_loader,model, device)
