@@ -83,9 +83,10 @@ def train(train_loader,dev_loader,model, device):
                 time2eval -= batch_size
                 if time2eval <= 0:
                     time2eval = params["evaluate_every"]
-                    loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
+                    loss_dev,accuracy_dev, kaggle_score_dev =eval_model(model,dev_loader, device)
                     print('Dev Loss: {}'.format(loss_dev))
                     print('Accuracy: {}'.format(accuracy_dev))
+                    print('Kaggle score: {}'.format(kaggle_score_dev))
                     tb_writer.add_scalar('dev loss', loss_dev, images_seen)
                     tb_writer.add_scalar('dev accuracy', accuracy_dev, images_seen)
                 #torch.save(model.state_dict(), path) 
@@ -130,7 +131,7 @@ def eval_model(model,loader, device):
     total_predictions = np.concat(total_predictions, axis = 0)
     total_labels = np.concat(total_labels, axis = 0)
 
-    kaggle_scores = get_kaggle_score(total_predictions, total_labels)
+    kaggle_score = get_kaggle_score(total_predictions, total_labels)
 
     accuracy=accuracy.item()/num
     LOSS=LOSS/len(loader)
@@ -143,7 +144,7 @@ def eval_model(model,loader, device):
         torch.save(model.state_dict(), "save/" + params["name"] + "/" + params["name"] + ".pkl")
         params["best_val_loss"] = LOSS
 
-    return LOSS,accuracy
+    return LOSS,accuracy,kaggle_score
 
 def get_kaggle_score(y_pred, y_label):
     if params['classifier'] == "multi" :
