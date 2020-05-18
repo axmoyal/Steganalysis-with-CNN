@@ -4,15 +4,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as td
-import random
 import sys
 import pandas as pd
 from tqdm import tqdm
 
 
 #from torch.utils.tensorboard import SummaryWriter
-from tensorboardX import SummaryWriter
-from dataload import Alaska
+from dataload import AlaskaTest
 from models import *
 from utils import get_available_devices, AverageMeter, alaska_weighted_auc
 from args import *
@@ -24,7 +22,7 @@ if __name__ == '__main__':
     name = sys.argv[1]
 
     params = load_params("save/" + name + "/" + name +".json")
-    
+
     device, gpu_ids = get_available_devices()
     print(device)
 
