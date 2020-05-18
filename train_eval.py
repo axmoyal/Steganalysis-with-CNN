@@ -112,7 +112,6 @@ def eval_model(model,loader, device):
             pbar2.update(X.shape[0])
             pbar2.set_postfix(loss =avg.avg)
             _, pred_classes = y_pred.max(dim = 1)
-            print(pred_classes)
             accuracy+=y_label.eq(pred_classes.long()).sum()
             # print("Eval successful")
         #print(accuracy)
@@ -150,7 +149,9 @@ if __name__ == '__main__':
     print(device)
     AlaskaDataset= Alaska()
     #model = Net(4)
-    model =SmallNet()
+    #model =SmallNet()
+    #model = SRNET()
+    model = ResNet(4)
     model = model.to(device)
     model.train()
 

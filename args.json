@@ -1,18 +1,17 @@
 {
-    "batch_size": 4,
+    "batch_size": 32,
     "classifier": "multi",
     "data_split_frac": 0.999,
+    "evaluate_every": 600,
+    "grad_max_norm": 100000.0,
     "hidden_dim": 8,
     "image_size": 512,
     "learning_rate": 0.0005,
-    "mode": "quads",
+    "mode": "pairs",
     "num_epochs": 50,
     "num_l2": 5,
     "num_l3": 4,
     "overfitting": "True",
     "scale": 1,
-    "evaluate_every": 20,
-    "grad_max_norm":100000.0,
-    "seed" : 669
+    "seed": 669
 }
-
