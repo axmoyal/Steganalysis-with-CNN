@@ -113,7 +113,7 @@ def eval_model(model,loader, device):
 
             y_pred=model(X)
 
-            scores = F.softmax(y_pred)
+            scores = F.softmax(y_pred, dim = 1)
             total_predictions.append(np.array(scores.cpu()))
             total_labels.append(np.array(y_label.cpu()))
 
@@ -128,9 +128,10 @@ def eval_model(model,loader, device):
             accuracy+=y_label.eq(pred_classes.long()).sum()
             # print("Eval successful")
         #print(accuracy)
-    total_predictions = np.concat(total_predictions, axis = 0)
-    total_labels = np.concat(total_labels, axis = 0)
-
+    total_predictions = np.concatenate(total_predictions, axis = 0)
+    total_labels = np.concatenate(total_labels, axis = 0)
+    print(total_predictions)
+    print(total_labels)
     kaggle_score = get_kaggle_score(total_predictions, total_labels)
 
     accuracy=accuracy.item()/num
