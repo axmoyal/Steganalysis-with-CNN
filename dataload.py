@@ -195,8 +195,10 @@ Args:
 def transform(image, transformation): 
     if params["channel_mode"] == "fourier":
         image = dct2(image)
-    else: 
+    elif params["channel_mode"] == "rgb": 
         image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
+    else:
+        raise ValueError("Provide a valid channel_mode, [fourier/rgb]")
 
     if transformation == 0: return image
     if transformation == 1: return image.rot90(1, [1, 2])

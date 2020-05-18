@@ -7,6 +7,7 @@ import scipy
 
 
 def dct2(im):
+    
     """
     return jpeg dct of image
     """
