@@ -32,7 +32,7 @@ def test(test_loader, model, device):
     print(len(scores))
     df = pd.DataFrame({'Id':np.arange(1,5001), 'Label':scores})
     df['Id'] = df['Id'].apply(lambda x : f'{x:04}' + ".jpg")
-    df.to_csv("save/" + name + "/" +name +".csv")
+    df.to_csv("save/" + name + "/" +name +".csv", index = False)
 
 def multi_to_binary(y_pred):
     temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
