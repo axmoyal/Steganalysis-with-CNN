@@ -1,0 +1,71 @@
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.utils.data as td
+import random
+import sys
+import pandas as pd
+from tqdm import tqdm
+
+
+#from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
+from dataload import Alaska
+from models import *
+from utils import get_available_devices, AverageMeter, alaska_weighted_auc
+from args import *
+
+
+if __name__ == '__main__':
+
+
+    name = sys.argv[1]
+
+    params = load_params("save/" + name + "/" + name +".json")
+    save_params(params)
+
+    device, gpu_ids = get_available_devices()
+    print(device)
+
+    AlaskaDataset= AlaskaTest()
+    #model = Net(4)
+    #model =SmallNet()
+    #model = SRNET()
+    model = ResNet(4)
+    model.load_state_dict(torch.load("save/" + name + "/" + name +".pkl"))
+    model = model.to(device)
+
+    model.eval()
+
+    test_loader = td.DataLoader(AlaskaDataset,  batch_size=params["batch_size"], shuffle = False)
+
+    test(test_loader,model, device)
+
+def test(test_loader, model, device):
+    total_predictions = [] 
+
+    for X in test_loader:
+        X = X.to_device()
+        y_pred = model(X)
+        scores = F.softmax(y_pred, dim = 1)
+        total_predictions.append(np.array(scores.cpu()))
+
+    total_predictions = np.concatenate(total_predictions, axis = 0)
+    scores = multi_to_binary(total_predictions)
+
+    
+    df = pd.DataFrame({'Id':[range(1,5000)], 'Label':scores})
+    df['Id'].apply(lambda x : f'{x:04}')
+    print(df)
+
+
+def multi_to_binary(y_pred):
+    temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
+    scores = temp / (y_pred[:,0] + temp)
+    return scores 
+
+
+
+
