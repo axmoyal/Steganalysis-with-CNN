@@ -136,11 +136,10 @@ def eval_model(model,loader, device):
 
     accuracy=accuracy.item()/num
     LOSS=LOSS/len(loader)
-    print('Num : {}'.format(num))
     model.train()
 
     if (params["best_val_loss"]==None) or (params["best_val_loss"] < kaggle_score):
-        print("New best validation loss")
+        print("New best kaggle scores")
         print("Saving model...")
         torch.save(model.state_dict(), "save/" + params["name"] + "/" + params["name"] + ".pkl")
         params["best_val_loss"] = kaggle_score

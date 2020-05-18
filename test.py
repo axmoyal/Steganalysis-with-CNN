@@ -24,8 +24,7 @@ if __name__ == '__main__':
     name = sys.argv[1]
 
     params = load_params("save/" + name + "/" + name +".json")
-    save_params(params)
-
+    
     device, gpu_ids = get_available_devices()
     print(device)
 
