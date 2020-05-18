@@ -18,12 +18,12 @@ from args import *
 
 def test(test_loader, model, device):
     total_predictions = [] 
-
-    for X in tqdm(test_loader):
-        X = X.to(device)
-        y_pred = model(X)
-        scores = F.softmax(y_pred, dim = 1)
-        total_predictions.append(np.array(scores.cpu()))
+    with torch.no_grad():
+        for X in tqdm(test_loader):
+            X = X.to(device)
+            y_pred = model(X)
+            scores = F.softmax(y_pred, dim = 1)
+            total_predictions.append(np.array(scores.cpu()))
 
     total_predictions = np.concatenate(total_predictions, axis = 0)
     scores = multi_to_binary(total_predictions)
