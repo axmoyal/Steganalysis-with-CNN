@@ -150,7 +150,7 @@ if __name__ == '__main__':
     print(device)
     AlaskaDataset= Alaska()
     #model = Net(4)
-    model =SmallNet()
+    model =SRNET()
     model = model.to(device)
     model.train()
 
