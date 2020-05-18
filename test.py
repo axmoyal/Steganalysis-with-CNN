@@ -37,7 +37,7 @@ def multi_to_binary(y_pred):
     temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
     scores = temp / (y_pred[:,0] + temp)
     return scores 
-    
+
 if __name__ == '__main__':
 
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
     print(device)
 
-    AlaskaDataset= AlaskaTest("data/Test/")
+    AlaskaDataset= AlaskaTest("data/")
     #model = Net(4)
     #model =SmallNet()
     #model = SRNET()
