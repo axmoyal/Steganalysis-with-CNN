@@ -53,13 +53,11 @@ def alaska_weighted_auc(y_true, y_valid):
     weights = [2,   1]
 
     fpr, tpr, thresholds = metrics.roc_curve(y_true, y_valid, pos_label=1)
-    print(fpr,tpr,thresholds)
     # size of subsets
     areas = np.array(tpr_thresholds[1:]) - np.array(tpr_thresholds[:-1])
 
     # The total area is normalized by the sum of weights such that the final weighted AUC is between 0 and 1.
     normalization = np.dot(areas, weights)
-    print(normalization)
     competition_metric = 0
     for idx, weight in enumerate(weights):
         y_min = tpr_thresholds[idx]
