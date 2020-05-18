@@ -51,7 +51,7 @@ def init_seed() :
 def train(train_loader,dev_loader,model, device):
     N_epoch = params["num_epochs"]
     lear_rate = params["learning_rate"]
-    num_batch = len(train_loader.dataset) / params["batch_size"]
+    images_seen = 0
     tb_writer = SummaryWriter("save/"+params["name"]+"/")
     opti= torch.optim.Adam(model.parameters(), lr=lear_rate)
     avg = AverageMeter()
@@ -78,15 +78,16 @@ def train(train_loader,dev_loader,model, device):
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
                 opti.step()  
-                tb_writer.add_scalar('batch train loss', loss_value , epoch*num_batch+batch_index)
+                tb_writer.add_scalar('batch train loss', loss_value , images_seen)
+                images_seen += batch_size
                 time2eval -= batch_size
                 if time2eval <= 0:
                     time2eval = params["evaluate_every"]
                     loss_dev,accuracy_dev=eval_model(model,dev_loader, device)
                     print('Dev Loss: {}'.format(loss_dev))
                     print('Accuracy: {}'.format(accuracy_dev))
-                    tb_writer.add_scalar('dev loss', loss_dev, epoch*num_batch+batch_index)
-                    tb_writer.add_scalar('dev accuracy', accuracy_dev, epoch*num_batch+batch_index)
+                    tb_writer.add_scalar('dev loss', loss_dev, images_seen)
+                    tb_writer.add_scalar('dev accuracy', accuracy_dev, images_seen)
                 #torch.save(model.state_dict(), path) 
 
 # evaluate the model on a loader.
