@@ -16,6 +16,28 @@ from utils import get_available_devices, AverageMeter, alaska_weighted_auc
 from args import *
 
 
+def test(test_loader, model, device):
+    total_predictions = [] 
+
+    for X in tqdm(test_loader):
+        X = X.to_device()
+        y_pred = model(X)
+        scores = F.softmax(y_pred, dim = 1)
+        total_predictions.append(np.array(scores.cpu()))
+
+    total_predictions = np.concatenate(total_predictions, axis = 0)
+    scores = multi_to_binary(total_predictions)
+
+    
+    df = pd.DataFrame({'Id':[range(1,5000)], 'Label':scores})
+    df['Id'].apply(lambda x : f'{x:04}')
+    df.to_csv("save/" + name + "/" +name +".csv")
+
+def multi_to_binary(y_pred):
+    temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
+    scores = temp / (y_pred[:,0] + temp)
+    return scores 
+    
 if __name__ == '__main__':
 
 
@@ -40,27 +62,7 @@ if __name__ == '__main__':
 
     test(test_loader,model, device)
 
-def test(test_loader, model, device):
-    total_predictions = [] 
 
-    for X in tqdm(test_loader):
-        X = X.to_device()
-        y_pred = model(X)
-        scores = F.softmax(y_pred, dim = 1)
-        total_predictions.append(np.array(scores.cpu()))
-
-    total_predictions = np.concatenate(total_predictions, axis = 0)
-    scores = multi_to_binary(total_predictions)
-
-    
-    df = pd.DataFrame({'Id':[range(1,5000)], 'Label':scores})
-    df['Id'].apply(lambda x : f'{x:04}')
-    df.to_csv("save/" + name + "/" +name +".csv")
-
-def multi_to_binary(y_pred):
-    temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
-    scores = temp / (y_pred[:,0] + temp)
-    return scores 
 
 
 
