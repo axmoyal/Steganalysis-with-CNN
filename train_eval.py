@@ -60,7 +60,7 @@ def train(train_loader,dev_loader,model, device):
         print("Starting Epoch: ", epoch)
         avg.reset()
         with torch.enable_grad(), tqdm(total=len(train_loader.dataset)*params["size_factor"]) as pbar:
-            for batch_index,(X,y_label) in enumerate(train_loader):
+            for (X,y_label) in train_loader:
                 X = X.to(device)
                 y_label = y_label.to(device)
                 X, y_label = prepbatch(X, y_label)
@@ -154,15 +154,6 @@ def get_kaggle_score(y_pred, y_label):
         scores = temp / (y_pred[:,0] + temp)
         return alaska_weighted_auc(y_label, scores)
 
-
-
-
-def test(test_loader,Model,path):
-	model = Model
-	model.load_state_dict(torch.load(path))
-	loss,accuracy=eval_model(model,test_loader)
-	print('Test Loss : '+str(loss))
-	print('Test Accuract : '+str(accuracy))
 
 if __name__ == '__main__':
     init_seed()
