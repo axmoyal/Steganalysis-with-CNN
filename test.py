@@ -20,7 +20,7 @@ def test(test_loader, model, device):
     total_predictions = [] 
 
     for X in tqdm(test_loader):
-        X = X.to_device()
+        X = X.to(device)
         y_pred = model(X)
         scores = F.softmax(y_pred, dim = 1)
         total_predictions.append(np.array(scores.cpu()))
