@@ -124,7 +124,7 @@ def eval_model(model,loader, device):
     if (params["best_val_loss"]==None) or (params["best_val_loss"] > LOSS):
         print("New best validation loss")
         print("Saving model...")
-        torch.save(model.state_dict(), ".save/" + params["name"] + "/" + params["name"] + ".pkl")
+        torch.save(model.state_dict(), "save/" + params["name"] + "/" + params["name"] + ".pkl")
 
     return LOSS,accuracy
 
