@@ -114,8 +114,8 @@ def eval_model(model,loader, device):
             y_pred=model(X)
 
             scores = F.softmax(y_pred)
-            total_predictions.append(np.array(scores))
-            total_labels.append(np.array(y_label))
+            total_predictions.append(np.array(scores.cpu()))
+            total_labels.append(np.array(y_label.cpu()))
 
 
             loss=F.cross_entropy(y_pred,y_label)
