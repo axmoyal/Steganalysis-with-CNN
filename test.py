@@ -28,7 +28,8 @@ def test(test_loader, model, device):
     total_predictions = np.concatenate(total_predictions, axis = 0)
     scores = multi_to_binary(total_predictions)
 
-
+    print(len(np.arange(1,5001)))
+    print(len(scores))
     df = pd.DataFrame({'Id':[np.arange(1,5001)], 'Label':scores})
     df['Id'].apply(lambda x : f'{x:04}')
     df.to_csv("save/" + name + "/" +name +".csv")
