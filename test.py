@@ -46,7 +46,7 @@ if __name__ == '__main__':
 def test(test_loader, model, device):
     total_predictions = [] 
 
-    for X in test_loader:
+    for X in tqdm(test_loader):
         X = X.to_device()
         y_pred = model(X)
         scores = F.softmax(y_pred, dim = 1)
@@ -58,8 +58,7 @@ def test(test_loader, model, device):
     
     df = pd.DataFrame({'Id':[range(1,5000)], 'Label':scores})
     df['Id'].apply(lambda x : f'{x:04}')
-    print(df)
-
+    df.to_csv("save/" + name + "/" +name +".csv")
 
 def multi_to_binary(y_pred):
     temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
