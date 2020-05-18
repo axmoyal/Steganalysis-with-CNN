@@ -26,7 +26,7 @@ if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
     print(device)
 
-    AlaskaDataset= AlaskaTest()
+    AlaskaDataset= AlaskaTest("data/Test/")
     #model = Net(4)
     #model =SmallNet()
     #model = SRNET()
