@@ -14,5 +14,6 @@
     "overfitting": "True",
     "scale": 1,
     "seed": 669,
-    "channel_mode": "fourier"
+    "channel_mode": "fourier",
+    "model": "SRNET"
 }

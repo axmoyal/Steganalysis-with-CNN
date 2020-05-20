@@ -164,10 +164,16 @@ if __name__ == '__main__':
     device, gpu_ids = get_available_devices()
     print(device)
     AlaskaDataset= Alaska()
-    #model = Net(4)
-    #model = SmallNet()
-    model = SRNET()
-    #model = ResNet(4)
+    if params["model"] == "Net":
+        model = Net(4)
+    elif  params["model"] == "SmallNet":
+        model = SmallNet()
+    elif params["model"] == "SRNET":
+        model = SRNET()
+    elif params["model"] == "ResNet":
+        model = ResNet(4)
+    else : 
+        raise ValueError("Please provide a valid model name [Net/SmallNet/SRNET/ResNet]")
     model = model.to(device)
     model.train()
 
