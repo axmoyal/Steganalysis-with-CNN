@@ -197,7 +197,6 @@ def transform(image, transformation):
         image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
     else:
         raise ValueError("Provide a valid channel_mode, [fourier/rgb]")
-
     if transformation == 0: return image
     if transformation == 1: return image.rot90(1, [1, 2])
     if transformation == 2: return image.rot90(2, [1, 2])

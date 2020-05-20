@@ -1,5 +1,5 @@
 {
-    "batch_size": 16,
+    "batch_size": 1,
     "classifier": "multi",
     "data_split_frac": 0.999,
     "evaluate_every": 600,
@@ -14,5 +14,5 @@
     "overfitting": "True",
     "scale": 1,
     "seed": 669,
-    "channel_mode": "rgb"
+    "channel_mode": "fourier"
 }

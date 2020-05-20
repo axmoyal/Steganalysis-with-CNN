@@ -39,18 +39,27 @@ class SRNET(nn.Module):
         h = params["hidden_dim"]
         num_l2 = params["num_l2"]
         num_l3 = params["num_l3"]
-        imsize = params["image_size"]
+        imsize = params["image_size"] if params["channel_mode"] == "rgb" else int(params["image_size"]/8)
         num_classes = 4 if params["classifier"] == "multi" else 2
 
         
         ################################# MODEL ################################ 
 
         self.layers = nn.ModuleList()
+        if params["channel_mode"] == "fourier" :
+            self.layers.append(nn.Conv2d(3, 4*h, 8, 8))
+            print("self.layers.append(nn.Conv2d(3,",4*h,"8,8))")
+            self.layers.append(nn.BatchNorm2d(4*h))
+            print("self.layers.append(nn.BatchNorm2d(",4*h,"))")
+            self.layers.append(nn.ReLU())
+            print("self.layers.append(nn.ReLU())")
+        else: 
+            self.layers.append(Layer1(3,4*h))
+            print("self.layers.append(Layer1(3,",4*h," ))")
 
         #two layers of type 1
-        self.layers.append(Layer1(3,4*h))
+    
         self.layers.append(Layer1(4*h,h))
-        print("self.layers.append(Layer1(3,",4*h," ))")
         print("self.layers.append(Layer1(",4*h,",",h," ))")
         #five layers of type 2
         for _ in range(num_l2): 
