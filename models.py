@@ -33,7 +33,7 @@ class ResNet(nn.Module):
 
         self.layers.append(nn.Conv2d(3, 4*h, 8, 8, bias = False))
         self.layers.append(nn.BatchNorm2d(4*h))
-        self.layers.append(nn.ReLU)
+        self.layers.append(nn.ReLU())
 
        self.model_pretrained=models.resnet18(pretrained=True)
        num_features = self.model_pretrained.fc.in_features
