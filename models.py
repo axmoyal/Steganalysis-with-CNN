@@ -26,7 +26,7 @@ class ResNet(nn.Module):
 
        self.layers = nn.ModuleList()
 
-
+       params = load_params()
        if params["channel_mode"] == "fourier" :
 
         h = params["hidden_dim"]
@@ -40,7 +40,7 @@ class ResNet(nn.Module):
        self.model_pretrained.fc = nn.Linear(num_features, num_classes)
 
        self.layers.append(self.model_pretrained)
-       
+
     def forward(self,x):
         return self.model_pretrained(x)
 
