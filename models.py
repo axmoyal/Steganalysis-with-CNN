@@ -23,9 +23,24 @@ import torchvision.models as models
 class ResNet(nn.Module):
     def __init__(self, num_classes):
        super().__init__()
+
+       self.layers = nn.ModuleList()
+
+
+       if params["channel_mode"] == "fourier" :
+
+        h = params["hidden_dim"]
+
+        self.layers.append(nn.Conv2d(3, 4*h, 8, 8, bias = False))
+        self.layers.append(nn.BatchNorm2d(4*h))
+        self.layers.append(nn.ReLU)
+
        self.model_pretrained=models.resnet18(pretrained=True)
        num_features = self.model_pretrained.fc.in_features
        self.model_pretrained.fc = nn.Linear(num_features, num_classes)
+
+       self.layers.append(self.model_pretrained)
+       
     def forward(self,x):
         return self.model_pretrained(x)
 
@@ -47,7 +62,7 @@ class SRNET(nn.Module):
 
         self.layers = nn.ModuleList()
         if params["channel_mode"] == "fourier" :
-            self.layers.append(nn.Conv2d(3, 4*h, 8, 8))
+            self.layers.append(nn.Conv2d(3, 4*h, 8, 8, bias = False))
             print("self.layers.append(nn.Conv2d(3,",4*h,"8,8))")
             self.layers.append(nn.BatchNorm2d(4*h))
             print("self.layers.append(nn.BatchNorm2d(",4*h,"))")
