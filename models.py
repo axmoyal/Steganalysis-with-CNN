@@ -5,8 +5,6 @@ from args import load_params
 from layers import Layer1,Layer2,Layer3,Layer4
 import torchvision.models as models
 
-# from efficientnet_pytorch import EfficientNet
-
 
 
 class ResNet(nn.Module):
