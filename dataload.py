@@ -128,7 +128,6 @@ Returns:
 """
 def single(idx, scale, path, isbinary) :
     ind = list(np.unravel_index(idx, (NUM_IM_PER_FILE, NUM_FILES, scale)))
-    ind[0] += 1
     label = 1 if isbinary else ind[1] 
     if (ind[1] == 0):
         image = imageio.imread(path + "/Cover/" + str(ind[0] ).rjust(5, '0') + ".jpg")
