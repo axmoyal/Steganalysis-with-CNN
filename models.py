@@ -19,9 +19,9 @@ class ResNet(nn.Module):
         h = params["hidden_dim"]
 
         self.layers.append(nn.Conv2d(3, 4*h, 8, 8, bias = False))
-        print("self.layers.append(nn.Conv2d(3, 4*h, 8, 8, bias = False))")
+        print("self.layers.append(nn.Conv2d(",3, 4*h, 8, 8," bias = False))")
         self.layers.append(nn.BatchNorm2d(4*h))
-        print("self.layers.append(nn.BatchNorm2d(4*h))")
+        print("self.layers.append(nn.BatchNorm2d(",4*h,"))")
         self.layers.append(nn.ReLU())
         print("self.layers.append(nn.ReLU())")
 
