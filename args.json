@@ -1,10 +1,10 @@
 {
     "batch_size": 16,
-    "channel_mode": "fourier",
+    "channel_mode": "rgb",
     "classifier": "multi",
     "data_split_frac": 0.999,
     "evaluate_every": 600,
-    "hidden_dim": 32,
+    "hidden_dim": 8,
     "image_size": 512,
     "learning_rate": 0.00005,
     "mode": "pairs",
@@ -13,6 +13,7 @@
     "num_l2": 5,
     "num_l3": 4,
     "overfitting": "True",
+    "resnet_depth":50,
     "scale": 1,
     "seed": 669
 }

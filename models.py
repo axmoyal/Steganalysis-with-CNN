@@ -24,8 +24,13 @@ class ResNet(nn.Module):
         print("self.layers.append(nn.BatchNorm2d(",4*h,"))")
         self.layers.append(nn.ReLU())
         print("self.layers.append(nn.ReLU())")
-
-       self.model_pretrained=models.resnet50(pretrained=True)
+       if params["resnet_depth"] == 18:
+        self.model_pretrained=models.resnet18(pretrained=True)
+       elif params["resnet_depth"] == 50:
+        self.model_pretrained=models.resnet50(pretrained=True)
+       else: 
+        raise ValueError("choose resnet depth")
+       
        num_features = self.model_pretrained.fc.in_features
        self.model_pretrained.fc = nn.Linear(num_features, num_classes)
 
