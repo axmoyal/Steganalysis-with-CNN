@@ -198,7 +198,7 @@ def transform(image, transformation):
     elif params["channel_mode"] == "rgb": 
         image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
         composition = transforms.Compose([
-            transforms.toTensor(),
+            transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             ])
 
