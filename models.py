@@ -33,7 +33,9 @@ class ResNet(nn.Module):
        print("self.layers.append(self.model_pretrained)")
 
     def forward(self,x):
-        return self.layers(x)
+        for layer in self.layers:
+            x = layer(x)
+        return x 
 
 class SRNET(nn.Module):
 
