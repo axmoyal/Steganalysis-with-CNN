@@ -76,7 +76,7 @@ def train(train_loader,dev_loader,model, device):
                 pbar.set_postfix(loss =avg.avg, epoch= epoch)
                 #print('Batch loss: {}'.format(loss))
                 loss.backward()
-                nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
+                # nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
                 opti.step()  
                 tb_writer.add_scalar('batch train loss', loss_value , images_seen)
                 images_seen += batch_size

@@ -14,8 +14,8 @@ class ResNet(nn.Module):
        self.layers = nn.ModuleList()
 
        params = load_params()
-       if params["channel_mode"] == "fourier" :
 
+       if params["channel_mode"] == "fourier" :
         h = params["hidden_dim"]
 
         self.layers.append(nn.Conv2d(3, 4*h, 8, 8, bias = False))
@@ -33,7 +33,7 @@ class ResNet(nn.Module):
        print("self.layers.append(self.model_pretrained)")
 
     def forward(self,x):
-        return self.model_pretrained(x)
+        return self.layers(x)
 
 class SRNET(nn.Module):
 
