@@ -10,6 +10,7 @@ import imageio
 import numpy as np
 from args import load_params
 from utils import dct2
+from torchvision import transforms
 
 NUM_IM_PER_FILE = 75000 #Number of images per file
 NUM_TEST_IM = 5000 #Number of test images
@@ -190,21 +191,27 @@ Args:
     transformation: number between 1 and 8 to decide transformation
 """
 def transform(image, transformation): 
+    composition = None
     if params["channel_mode"] == "fourier":
         image = dct2(image)
+        composition = transforms.Compose([])
     elif params["channel_mode"] == "rgb": 
         image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
-        print(image)
+        composition = transforms.Compose([
+            transforms.toTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ])
+
     else:
         raise ValueError("Provide a valid channel_mode, [fourier/rgb]")
-    if transformation == 0: return image
-    if transformation == 1: return image.rot90(1, [1, 2])
-    if transformation == 2: return image.rot90(2, [1, 2])
-    if transformation == 3: return image.rot90(3, [1, 2])
-    if transformation == 4: return image.flip(2)
-    if transformation == 5: return image.rot90(1, [1, 2]).flip(2)
-    if transformation == 6: return image.rot90(2, [1, 2]).flip(2)
-    if transformation == 7: return image.rot90(3, [1, 2]).flip(2)
+    if transformation == 0: return composition(image)
+    if transformation == 1: return compostion(image.rot90(1, [1, 2]))
+    if transformation == 2: return compostion(image.rot90(2, [1, 2]))
+    if transformation == 3: return compostion(image.rot90(3, [1, 2]))
+    if transformation == 4: return compostion(image.flip(2))
+    if transformation == 5: return compostion(image.rot90(1, [1, 2]).flip(2))
+    if transformation == 6: return compostion(image.rot90(2, [1, 2]).flip(2))
+    if transformation == 7: return compostion(image.rot90(3, [1, 2]).flip(2))
     raise ValueError ("Not a valid transformation")
 
 
