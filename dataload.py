@@ -194,6 +194,7 @@ def transform(image, transformation):
         image = dct2(image)
     elif params["channel_mode"] == "rgb": 
         image = torch.tensor(image, dtype= torch.float).permute(2,0,1)
+        print(image)
     else:
         raise ValueError("Provide a valid channel_mode, [fourier/rgb]")
     if transformation == 0: return image
