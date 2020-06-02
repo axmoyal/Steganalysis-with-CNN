@@ -25,7 +25,7 @@ class ResNet(nn.Module):
         self.layers.append(nn.ReLU())
         print("self.layers.append(nn.ReLU())")
 
-       self.model_pretrained=models.resnet18(pretrained=True)
+       self.model_pretrained=models.resnet50(pretrained=True)
        num_features = self.model_pretrained.fc.in_features
        self.model_pretrained.fc = nn.Linear(num_features, num_classes)
 
