@@ -70,16 +70,12 @@ class SRNET(nn.Module):
             self.layers.append(Layer1(3,4*h))
             print("self.layers.append(Layer1(3,",4*h," ))")
 
-        #two layers of type 1
     
         self.layers.append(Layer1(4*h,h))
         print("self.layers.append(Layer1(",4*h,",",h," ))")
-        #five layers of type 2
         for _ in range(num_l2): 
             self.layers.append(Layer2(h,h))
             print("self.layers.append(Layer2(",h,",",h," ))")
-
-        #four layers of type 3
         self.layers.append(Layer3(h,h))
         print("self.layers.append(Layer3(",h,",",h," ))")
         size = 4
@@ -89,16 +85,9 @@ class SRNET(nn.Module):
             print("self.layers.append(Layer3(",h*psize,",",h*size," ))")
             psize = size
             size *= 2
-        # self.layers.append(Layer3(h,h))
-        # self.layers.append(Layer3(h,4*h))
-        # self.layers.append(Layer3(4*h,8*h))
-        # self.layers.append(Layer3(8*h,16*h))
-        
-        #one layer of type 4
         self.layers.append(Layer4(int(h*size/2), imsize, int(imsize/(2**num_l3))))
         print("self.layers.append(Layer4(",h*size/2,",",imsize,",",int(imsize/(2**num_l3))," ))")
 
-        #linear
         self.layers.append(nn.Linear(imsize, num_classes))
         print("self.layers.append(nn.Linear(",imsize,",",num_classes," ))")
 
@@ -106,26 +95,20 @@ class SRNET(nn.Module):
     def forward(self,x):
         for layer in self.layers:
             x = layer(x)
-            # print( x.shape )
         return x 
 
-
-#for local debugging purposes
 class SmallNet(nn.Module) :
     def __init__(self):
         super(SmallNet,self).__init__()
 
         self.layers = nn.ModuleList()
 
-        #two layers of type 1
         self.layers.append(nn.Conv2d(3,16, 7))
 
         self.layers.append(nn.MaxPool2d(5))
         self.layers.append(nn.MaxPool2d(5))
         self.layers.append(nn.MaxPool2d(5))
 
-
-        #linear
         self.lins = nn.ModuleList()
         self.lins.append( nn.Linear(256,4))
 
@@ -133,10 +116,8 @@ class SmallNet(nn.Module) :
     def forward(self,x):
         for layer in self.layers:
             x = layer(x)
-            # print( x.shape )
         N, C, H, W = x.shape
         x = x.view(N,-1)
-        # print("C: " ,C*H*W)
         for layer in self.lins:
             x = layer(x)
         return x

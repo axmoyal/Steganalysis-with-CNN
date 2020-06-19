@@ -8,8 +8,6 @@ import sys
 import pandas as pd
 from tqdm import tqdm
 
-
-#from torch.utils.tensorboard import SummaryWriter
 from dataload import AlaskaTest
 from models import *
 from utils import get_available_devices, AverageMeter, alaska_weighted_auc
@@ -27,9 +25,6 @@ def test(test_loader, model, device):
 
     total_predictions = np.concatenate(total_predictions, axis = 0)
     scores = multi_to_binary(total_predictions)
-
-    print(len(np.arange(1,5001)))
-    print(len(scores))
     df = pd.DataFrame({'Id':np.arange(1,5001), 'Label':scores})
     df['Id'] = df['Id'].apply(lambda x : f'{x:04}' + ".jpg")
     df.to_csv("save/" + name + "/" +name +".csv", index = False)
@@ -40,27 +35,15 @@ def multi_to_binary(y_pred):
     return scores 
 
 if __name__ == '__main__':
-
-
     name = sys.argv[1]
-
     params = load_params("save/" + name + "/" + name +".json")
-
     device, gpu_ids = get_available_devices()
-    print(device)
-
     AlaskaDataset= AlaskaTest("data/")
-    #model = Net(4)
-    #model =SmallNet()
-    #model = SRNET()
     model = ResNet(4)
     model.load_state_dict(torch.load("save/" + name + "/" + name +".pkl"))
     model = model.to(device)
-
     model.eval()
-
     test_loader = td.DataLoader(AlaskaDataset,  batch_size=params["batch_size"], shuffle = False)
-
     test(test_loader,model, device)
 
 

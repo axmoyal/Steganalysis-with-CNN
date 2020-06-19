@@ -24,7 +24,6 @@ class Alaska(Dataset):
     """
     Description: Alaska dataset loader.
     More information can be found at:
-    https://www.kaggle.com/c/alaska2-image-steganalysis/data?select=Cover
 
     Args: 
         dirpath (str) : Path to directory containing dataset. 
@@ -40,7 +39,6 @@ class Alaska(Dataset):
             "multi" : Multi class
             "binary" : Binary class
     """
-
     def __init__(self):
         ##################### GET PARAMS ######################
         mode = params["mode"]
@@ -211,32 +209,3 @@ def transform(image, transformation):
     if transformation == 6: return image.rot90(2, [1, 2]).flip(2)
     if transformation == 7: return image.rot90(3, [1, 2]).flip(2)
     raise ValueError ("Not a valid transformation")
-
-
-
-########################### TEST ################################
-
-# import matplotlib.pyplot as plt
-# d1 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "single", 1, "binary")
-# d2 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "pairs", 8, "binary")
-# d3 = Alaska("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data", "quads", 5, "multi")
-# t1 = AlaskaTest("C:/Users/lucas/Documents/Stanford/CS231n/DNN_Steganalysis/data")
-# while True: 
-#     ind1 = np.random.randint(0, len(d1))
-#     ind2 = np.random.randint(0, len(d2))
-#     ind3 = np.random.randint(0, len(d3))
-#     ind4 = np.random.randint(0, len(t1))
-#     plt.imshow(d1[ind1][0].permute(1,2,0))
-#     plt.title("Label d1 " + str(d1[ind1][1]))
-#     plt.show()
-#     for i in [0,1]: 
-#         plt.imshow(d2[ind2][0][i].permute(1,2,0))
-#         plt.title("Label d2 " + str(d2[ind2][1][i]))
-#         plt.show()
-#     for i in [0,1,2,3]: 
-#         plt.imshow(d3[ind3][0][i].permute(1,2,0))
-#         plt.title("Label d3 " + str(d3[ind3][1][i]))
-#         plt.show()
-#     plt.imshow(t1[ind4].permute(1,2,0))
-#     plt.title("Label t1" )
-#     plt.show()

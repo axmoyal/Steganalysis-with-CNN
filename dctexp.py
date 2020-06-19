@@ -7,7 +7,7 @@ from numpy import sin
 from numpy import zeros
 from numpy import r_
 from scipy import signal
-from scipy import misc # pip install Pillow
+from scipy import misc
 import matplotlib.pylab as pylab
 
 import imageio
@@ -23,8 +23,6 @@ def rgb2ycb(im):
     out[:,:,1] = 128 -  0.168736*im[:,:,0] - 0.331264*im[:,:,1] + 0.5*im[:,:,2]
     out[:,:,2] = 128 + 0.5*im[:,:,0] - 0.418688*im[:,:,1] - 0.081312*im[:,:,2]
     return out
-# plt.subplot(211)
-# plt.imshow(np.abs(im-imog))
 
 im = rgb2ycb(im)
 imog = rgb2ycb(imog)
@@ -32,7 +30,6 @@ imsize = im.shape
 dct = np.zeros(imsize)
 dctog = np.zeros(imsize)
 
-# Do 8x8 DCT on image (in-place)
 for i in r_[:imsize[0]:8]:
     for j in r_[:imsize[1]:8]:
         dct[i:(i+8),j:(j+8)] = dct2( im[i:(i+8),j:(j+8)]  )
@@ -58,16 +55,3 @@ for i in r_[:imsize[0]:8]:
         plt.subplot(339)
         plt.imshow(np.abs(dctog[i:(i+8),j:(j+8),2]- dct[i:(i+8),j:(j+8),2]))
         plt.show()
-
-# im = np.array(imageio.imread("./data" + "/JMiPOD/" + "00000" + ".jpg") )
-# imog = np.array(imageio.imread("./data" + "/Cover/" + "00000" + ".jpg") )
-
-# plt.subplot(221)
-# plt.imshow(dct)
-# plt.subplot(222)
-# plt.imshow(dctog)
-# plt.subplot(223)
-# plt.imshow(im)
-# plt.subplot(224)
-# plt.imshow(imog)
-# plt.show()
