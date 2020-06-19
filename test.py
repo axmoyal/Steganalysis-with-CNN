@@ -15,6 +15,12 @@ from args import *
 
 
 def test(test_loader, model, device):
+    """ Test the model and store the results in a csv.
+    Args:
+        test_loader(dataloader) : the dataloader use for testing
+        model(nn.Module) : the model trained
+        device(torch.device) : device type whether we use GPU or CPU
+    """
     total_predictions = [] 
     with torch.no_grad():
         for X in tqdm(test_loader):
@@ -30,6 +36,11 @@ def test(test_loader, model, device):
     df.to_csv("save/" + name + "/" +name +".csv", index = False)
 
 def multi_to_binary(y_pred):
+    """
+    Provide an equivalent of the accuracy in case in multiclassification
+    Args:
+        y_pred(tenssor): output tensor
+    """
     temp = np.maximum(y_pred[:,1],y_pred[:,2],y_pred[:,3])
     scores = temp / (y_pred[:,0] + temp)
     return scores 

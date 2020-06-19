@@ -16,9 +16,14 @@ from utils import get_available_devices, AverageMeter, alaska_weighted_auc
 from args import *
 from test import multi_to_binary
 
+
 params = load_params()
 
 def get_dataloaders(alaska_dataset):
+    """ Create a Datataloader from a dataset, if params["overfitting"] is true then the training is the same than the testing (It is just for testing that the model converges.).
+    Args:
+        alaska_dataset (dataset) : the dataset object to load.
+    """
     b_size = params["batch_size"]
     frac_test = params["data_split_frac"]
     N=len(alaska_dataset)
@@ -37,18 +42,32 @@ def get_dataloaders(alaska_dataset):
     return train_loader,dev_loader
 
 def prepbatch(X, y) : 
+     """ Formatting tensor for preprocessing the batch.
+    Args:
+        X (tensor) : input tensor
+        y (tensor) : output tensor
+    """
     X = X.view(-1, 3, params["image_size"],  params["image_size"])
     y = y.view(-1)
     return X, y
 
 def init_seed() :
+    """ Description: Initialisation of seed for the gpu. 
+    """
     random.seed(params["seed"])
     torch.manual_seed(params["seed"])
     torch.cuda.manual_seed_all(params["seed"])
 
         
-# train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
+
 def train(train_loader,dev_loader,model, device):
+    """ Train the model from a dataloader and evaluate it every 5 batch  on the dev dataloader
+    Args:
+        train_loader(dataloader) : the dataloader use for training 
+        dev_loader(dataloader) : the dataloader use for evaluation
+        model(nn.Module) : the model trained
+        device(torch.device) : device type whether we use GPU or CPU
+    """
     N_epoch = params["num_epochs"]
     lear_rate = params["learning_rate"]
     images_seen = 0
@@ -65,7 +84,6 @@ def train(train_loader,dev_loader,model, device):
                 y_label = y_label.to(device)
                 X, y_label = prepbatch(X, y_label)
                 batch_size = X.shape[0]
-                #print(y_label)
                 opti.zero_grad()
                 y_pred=model(X)
 
@@ -74,9 +92,7 @@ def train(train_loader,dev_loader,model, device):
                 pbar.update(batch_size)
                 avg.update(loss_value,1)
                 pbar.set_postfix(loss =avg.avg, epoch= epoch)
-                #print('Batch loss: {}'.format(loss))
                 loss.backward()
-                # nn.utils.clip_grad_norm_(model.parameters(), params["grad_max_norm"])
                 opti.step()  
                 tb_writer.add_scalar('batch train loss', loss_value , images_seen)
                 images_seen += batch_size
@@ -92,8 +108,14 @@ def train(train_loader,dev_loader,model, device):
                     tb_writer.add_scalar('kaggle score', kaggle_score_dev, images_seen)
                 #torch.save(model.state_dict(), path) 
 
-# evaluate the model on a loader.
+
 def eval_model(model,loader, device):
+      """ Evaluate the model on  a specific dataloader with accuracy and kaggle score 
+    Args:
+        loader(dataloader) : the dataloader use for evaluation 
+        model(nn.Module) : the model trained
+        device(torch.device) : device type whether we use GPU or CPU
+    """
     model.eval()
     LOSS=0
     accuracy=0
@@ -113,11 +135,9 @@ def eval_model(model,loader, device):
             num += X.shape[0]
 
             y_pred=model(X)
-
             scores = F.softmax(y_pred, dim = 1)
             total_predictions.append(np.array(scores.cpu()))
             total_labels.append(np.array(y_label.cpu()))
-
 
             loss=F.cross_entropy(y_pred,y_label)
             LOSS+=loss.item()
@@ -147,6 +167,11 @@ def eval_model(model,loader, device):
     return LOSS,accuracy,kaggle_score
 
 def get_kaggle_score(y_pred, y_label):
+    """ Compute the Kaggle score 
+    Args:
+        y_pred(tensor) : the predicted tensor 
+        y_label(tensor) : the labelled tensor
+    """
     if params['classifier'] == "multi" :
         y_label = (y_label >= 1).astype(int)
         scores = multi_to_binary(y_pred)
@@ -157,12 +182,10 @@ def get_kaggle_score(y_pred, y_label):
 
 if __name__ == '__main__':
     init_seed()
-
     params = load_params()
     save_params(params)
     params['name'] = sys.argv[1]
     device, gpu_ids = get_available_devices()
-    print(device)
     AlaskaDataset= Alaska()
     if params["model"] == "Net":
         model = Net(4)
@@ -176,7 +199,6 @@ if __name__ == '__main__':
         raise ValueError("Please provide a valid model name [Net/SmallNet/SRNET/ResNet]")
     model = model.to(device)
     model.train()
-
     train_loader,dev_loader=get_dataloaders(AlaskaDataset)
     params["best_val_loss"]=None
     train(train_loader,dev_loader,model, device)

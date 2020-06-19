@@ -1,3 +1,4 @@
+# python file for renaming images for the dataloader
 import os 
 os.chdir('data')
 for directory in ['Cover','JMiPOD','JUNIWARD','UERD','Test']:
